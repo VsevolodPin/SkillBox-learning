@@ -1,5 +1,6 @@
 ﻿/// Задание 1
 Console.WriteLine("Hello, World!!!");
+Console.ReadKey();
 
 /// Задание 2
 Console.Write("Hello, ");
