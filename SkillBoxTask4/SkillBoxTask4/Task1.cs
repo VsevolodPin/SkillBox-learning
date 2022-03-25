@@ -16,13 +16,16 @@ double max = int.Parse(Console.ReadLine());
 
 Random rand = new Random();
 double sum = 0;
-double[][] matr = new double[N][];
+// не совсем матрица, все-таки это массив массивов, а матрица будет double[,] matr = new double[N, M];
+// иногда удобнее работать с массивом массивов (например, очень легко вырезать из них отдельные строки)
+double[][] matr = new double[N][]; 
 for (int i = 0; i < N; i++)
 {
     matr[i] = new double[M];
     for (int j = 0; j < M; j++)
     {
         matr[i][j] = (-0.5 + rand.NextDouble()) * (max - min);
+        // либо, если double числа не нужны, то можно matr[i][j] = rand.Next((int)min, (int)max+1);
         sum += matr[i][j];
         Console.Write($"{matr[i][j].ToString("f2")} ");
     }

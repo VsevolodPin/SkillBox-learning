@@ -1,6 +1,7 @@
 ﻿/// Задание 2
 /// Наименьший элемент в последовательности.
 /// Программа выводит на экран наименьшее число из последовательности пользователя. 
+/// 
 Console.WriteLine("Введите длину последовательности");
 int N = int.Parse(Console.ReadLine());
 
@@ -11,27 +12,16 @@ for (int i = 0; i < N; i++)
     Console.WriteLine("Введите элемент последовательности");
     sec[i] = int.Parse(Console.ReadLine());
 
-    // вариант 1
+    // сразу ищем минимальное число, не заводя в конце отдельный цикл
     if (sec[i] < min) min = sec[i];
-
-    // вариант 2
-    /*
-    if (i == 0) 
-        min = sec[i]; 
-    else     
-        if (sec[i]<min) 
-            min = sec[i];
-    */
 }
 
-/*
-Предложенный вариант - долгий, если массив большой
-min = int.MaxValue;
+Console.Write("Последовательность: ");
 for (int i = 0; i < N; i++)
 {
-    if (sec[i] < min) min = sec[i];
+    Console.Write($"{sec[i]}, ");
 }
-*/
+Console.WriteLine();
 
-Console.WriteLine($"Минимальный элемент последовательности = {min}");
+Console.WriteLine($"Минимальный элемент последовательности: {min}");
 Console.ReadKey();
