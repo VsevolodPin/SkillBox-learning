@@ -9,15 +9,20 @@ int max = int.Parse(Console.ReadLine());
 int value = new Random().Next(max + 1);
 
 int turns = 1; // счетчик попыток. Для самых увлеченных - можно проверить, что бинарный поиск работает за log2(N) шагов
-Console.WriteLine("Число выбрано, игра начинается. Чтобы прекратить ее, введите -1 вместо очередной гипотезы.");
+Console.WriteLine("Число выбрано, игра начинается. Чтобы прекратить ее, нажмите Enter вместо очередной гипотезы.");
 
 // решил использовать do while() так как ну хотя бы 1 итерацию игры пользователь всяко осилит
 do
 {
     Console.WriteLine("Угадайте выбранное число. Введите свою догадку:");
 
-    int hyp_val = int.Parse(Console.ReadLine());
-    if (hyp_val < 0)
+    int hyp_val;
+
+    try
+    {
+        hyp_val = int.Parse(Console.ReadLine());
+    }
+    catch (System.FormatException)
     {
         Console.WriteLine($"Очень жаль, что вы сдаетесь. Загадано было число {value}");
         break;
