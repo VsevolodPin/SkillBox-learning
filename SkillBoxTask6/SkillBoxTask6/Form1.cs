@@ -33,12 +33,25 @@ namespace SkillBoxTask6
                 int first_sep_idx = strs[last_idx].IndexOf(sep);
 
                 int last_id = Convert.ToInt16(strs[last_idx].Remove(first_sep_idx));
-                string to_add = $"{last_id + 1}{sep}{current_time}{sep}{FullName}{sep}{Age.Text}{sep}{HeightTB.Text}{sep}{DateOfBorn.Text}{sep}{PlaceOfBorn.Text}";
+                string to_add = 
+                    $"{last_id + 1}{sep}" +
+                    $"{current_time}{sep}" +
+                    $"{FullName}{sep}{Age.Text}" +
+                    $"{sep}{HeightTB.Text}{sep}" +
+                    $"{DateOfBorn.Text}{sep}" +
+                    $"{PlaceOfBorn.Text}";
                 File.AppendAllText(FileName.Text, $"{to_add}\n");
             }
             else
             {
-                string to_add = $"1{sep}{current_time}{sep}{FullName}{sep}{Age.Text}{sep}{HeightTB.Text}{sep}{DateOfBorn.Text}{sep}{PlaceOfBorn.Text}";
+                string to_add = 
+                    $"1{sep}" +
+                    $"{current_time}{sep}" +
+                    $"{FullName}{sep}" +
+                    $"{Age.Text}{sep}" +
+                    $"{HeightTB.Text}{sep}" +
+                    $"{DateOfBorn.Text}{sep}" +
+                    $"{PlaceOfBorn.Text}";
                 File.WriteAllText(FileName.Text, $"{to_add}\n");
             }
         }
