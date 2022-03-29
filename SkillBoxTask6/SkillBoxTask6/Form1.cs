@@ -9,6 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+// Задача 6.6
+// При запуске программы должен быть выбор:
+// Вывести данные на экран;
+// Заполнить данные и добавить новую запись в конец файла (создать, если его пока нет).
+
 namespace SkillBoxTask6
 {
     public partial class Form1 : Form
@@ -16,11 +21,16 @@ namespace SkillBoxTask6
         // Для гибкости
         private char sep = '|';
 
+
         public Form1()
         {
             InitializeComponent();
         }
+        
 
+        /// <summary>
+        /// Обработка кнопки добавления сотрудника
+        /// </summary>
         private void AddWorker_Click(object sender, EventArgs e)
         {
             string current_time = DateTime.Now.ToString("dd.MM.yyyy hh:mm");
@@ -56,6 +66,9 @@ namespace SkillBoxTask6
             }
         }
 
+        /// <summary>
+        /// Обработка кнопки чтения указанного файла
+        /// </summary>
         private void ReadFile_Click(object sender, EventArgs e)
         {
             if (File.Exists(FileName.Text))
@@ -69,7 +82,7 @@ namespace SkillBoxTask6
             }
             else
             {
-                FileOutput.Text = "File isn`t exist.";
+                FileOutput.Text = "File doesn`t exist.";
             }
         }
     }
