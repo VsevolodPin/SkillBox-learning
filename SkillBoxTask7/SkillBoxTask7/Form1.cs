@@ -33,7 +33,11 @@ namespace SkillBoxTask7
         private void AddWorker_Click(object sender, EventArgs e)
         {
             bool FileExist = File.Exists(FileName.Text);
-            bool FileEmpty = File.ReadAllText(FileName.Text).Length < 4 ? true : false;
+            bool FileEmpty;
+            if (!FileExist)
+                FileEmpty = false;
+            else
+                FileEmpty = File.ReadAllText(FileName.Text).Length < 4 ? true : false;
             if (FileExist && !FileEmpty)
             {
                 string[] strs = File.ReadAllLines(FileName.Text);
@@ -121,7 +125,11 @@ namespace SkillBoxTask7
         private void ReadFile_Click(object sender, EventArgs e)
         {
             bool FileExist = File.Exists(FileName.Text);
-            bool FileEmpty = File.ReadAllText(FileName.Text).Length < 4 ? true : false;
+            bool FileEmpty;
+            if (!FileExist)
+                FileEmpty = false;
+            else
+                FileEmpty = File.ReadAllText(FileName.Text).Length < 4 ? true : false;
             if (FileExist)
             {
                 if (FileEmpty)
@@ -151,7 +159,11 @@ namespace SkillBoxTask7
         {
             FileOutput.Text = "";
             bool FileExist = File.Exists(FileName.Text);
-            bool FileEmpty = File.ReadAllText(FileName.Text).Length < 4 ? true : false;
+            bool FileEmpty;
+            if (!FileExist)
+                FileEmpty = false;
+            else
+                FileEmpty = File.ReadAllText(FileName.Text).Length < 4 ? true : false;
             if (FileExist && !FileEmpty)
             {
                 string[] text = File.ReadAllLines(FileName.Text);
@@ -225,6 +237,17 @@ namespace SkillBoxTask7
         /// </summary>
         private void UpDownSort_BT_Click(object sender, EventArgs e)
         {
+            if (up_to_down)
+            {
+                up_to_down = !up_to_down;
+                UpDownSort_BT.Text = "Снизу-вверх";
+            }
+            else
+            {
+                up_to_down = !up_to_down;
+                UpDownSort_BT.Text = "Сверху-вниз";
+            }
+            ReadByDate_BT_Click(sender, e);
         }
 
         /// <summary>
