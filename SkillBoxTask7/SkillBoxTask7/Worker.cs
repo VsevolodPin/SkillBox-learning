@@ -8,6 +8,8 @@ namespace SkillBoxTask7
 {
     internal struct Worker
     {
+        #region Поля класса (ну, структуры)
+
         private char sep;
         // ID
         uint ID;
@@ -23,6 +25,10 @@ namespace SkillBoxTask7
         DateTime birth_day;
         // Место рождения
         string birth_place;
+
+        #endregion
+
+        #region Методы и getter`ы структуры
 
         /// <summary>
         /// Создание нового работника
@@ -88,6 +94,8 @@ namespace SkillBoxTask7
         {
             get => creation_time;
         }
+
+        #endregion
     }
 }
 
