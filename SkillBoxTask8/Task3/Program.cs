@@ -18,14 +18,14 @@ namespace Task3
             {
                 try
                 {
-                    Console.WriteLine("Введите число");
+                    Console.WriteLine("Введите число:");
                     string strValue = Console.ReadLine();
                     if (String.IsNullOrEmpty(strValue)) break;
                     int intValue = int.Parse(strValue);
                     if (hs.Add(intValue))
                         Console.WriteLine($"Число {intValue} успешно добавлено!");
                     else
-                        Console.WriteLine($"Число {intValue} уже присутствует в множестве");
+                        Console.WriteLine($"Число {intValue} уже присутствует в множестве.");
                 }
                 catch
                 {

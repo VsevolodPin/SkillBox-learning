@@ -44,6 +44,7 @@ namespace Task2
 
             } while (true);
             #endregion
+
             // Конец работы программы
             Console.WriteLine("Конец выполнения программы.");
             Console.ReadLine();

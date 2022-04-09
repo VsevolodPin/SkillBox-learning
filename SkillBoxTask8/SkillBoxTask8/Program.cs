@@ -22,25 +22,25 @@ namespace SkillBoxTask8
                 max = 100;      // максимальное число
             Console.WriteLine("Введите количество случайных чисел n:");
             try { n = int.Parse(Console.ReadLine()); }
-            catch { };
+            catch { Console.WriteLine(n); };
             Console.WriteLine("Введите минимальное случайное число");
             try { min = int.Parse(Console.ReadLine()); }
-            catch { };
+            catch { Console.WriteLine(min); };
             Console.WriteLine("Введите максимальное случайное число");
             try { max = int.Parse(Console.ReadLine()); }
-            catch { };
+            catch { Console.WriteLine(max); };
 
             // Создаем лист
             Console.WriteLine("Полученный лист:");
             for (int i = 0; i < n; i++)
             {
                 arr.Add(rand.Next(min, max + 1));
-                Console.Write($"{arr[i],4}, ");
+                Console.Write($"{arr[i], 4}, ");
             }
 
             // Редактируем лист
             Console.WriteLine();
-            Console.WriteLine($"Удалим числа, меньше {(int)(min + (max - min) * 0.25),4} и больше {(int)(min + (max - min) * 0.5),4}");
+            Console.WriteLine($"Удалим числа, меньше {(int)(min + (max - min) * 0.25), 4} и больше {(int)(min + (max - min) * 0.5), 4}");
             Console.WriteLine($"Полученный лист:");
             for (int i = 0; i < arr.Count; i++)
             {
@@ -51,7 +51,7 @@ namespace SkillBoxTask8
                 }
                 else
                 {
-                    Console.Write($"{arr[i],4}, ");
+                    Console.Write($"{arr[i], 4}, ");
                 }
             }
             Console.ReadLine();
