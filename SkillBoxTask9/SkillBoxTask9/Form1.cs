@@ -19,13 +19,12 @@ namespace SkillBoxTask9
 {
     public partial class Form1 : Form
     {
+        #region Инициализация бота
         const string token = "5293507937:AAGyuOGI5-25ztw5_YOmFiSq0z9hqJgyUWM";
         static ITelegramBotClient bot = new TelegramBotClient(token);
+        #endregion
 
-        static List<string> commands;
-
-        static string startMessage;
-        static string commandsList;
+        #region Пути к папкам и начальные сообщения
         static string pathToDownloads = "..\\..\\..\\Downloads";
         static string[] directoriesForDownloading = new string[] {
             "..\\..\\..\\Downloads\\Audio",
@@ -33,7 +32,17 @@ namespace SkillBoxTask9
             "..\\..\\..\\Downloads\\Pics",
             "..\\..\\..\\Downloads\\Texts" };
         static string ballDirectory = "..\\..\\..\\Magic ball";
+        static string[] commands = { "/start", "/help", "/flist", "/fget [имя файла]", "/ask [ваш вопрос]" };
+        static string startMessage;
+        static string commandsList;
+        #endregion
 
+        #region Методы бота
+        /// <summary>
+        /// Основная функция бота, обрабатывающая события
+        /// </summary>
+        /// <param name="botClient"> Бот, который обрабатывает события </param>
+        /// <param name="update"> Событие </param>
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
@@ -48,26 +57,26 @@ namespace SkillBoxTask9
                         var commandText = message.Text.Split(' ').ToList<string>();
                         string command = commandText[0].ToLower();
 
-                        // /start
+                        // Команда /start - 0
                         if (command == commands[0])
                         {
                             await botClient.SendTextMessageAsync(message.Chat, startMessage);
                             return;
                         }
-                        // /help
+                        // Команда /help - 1
                         if (command == commands[1])
                         {
                             await botClient.SendTextMessageAsync(message.Chat, commandsList);
                             return;
                         }
-                        // /files_list
+                        // Команда /files_list - 2
                         if (command == commands[2])
                         {
                             string files = listToString(getFiles(pathToDownloads));
                             await botClient.SendTextMessageAsync(message.Chat, listToString(getFiles(pathToDownloads)));
                             return;
                         }
-                        // /get_file
+                        // Команда /get_file - 3
                         if (command == commands[3].Split(' ')[0])
                         {
                             string fileName = "";
@@ -129,7 +138,7 @@ namespace SkillBoxTask9
                             await botClient.SendTextMessageAsync(message.Chat, "Указанного файла не существует. Укажите другой.");
                             return;
                         }
-                        // /ask
+                        // Команда /ask - 4
                         if (command == commands[4].Split(' ')[0])
                         {
                             string[] answers = new string[] {
@@ -196,20 +205,24 @@ namespace SkillBoxTask9
             }
         }
 
+        /// <summary>
+        /// Обработка ошибок
+        /// </summary>
         public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
+        #endregion
 
+        #region Методы формы
         public Form1()
         {
             InitializeComponent();
 
-            commands = new List<string>() { "/start", "/help", "/flist", "/fget [имя файла]", "/ask [ваш вопрос]" };
             commandsList = "Список доступных команд:\n";
-            for (int i = 0; i < commands.Count; i++)
+            for (int i = 0; i < commands.Length; i++)
                 commandsList += $"{commands[i]}\n";
-            startMessage = $"Готов работать день и ночь! Список доступных команд:\n{commandsList}";
+            startMessage = $"Готов работать день и ночь!\n{commandsList}";
         }
 
         private void StartButton_Click(object sender, EventArgs e)
@@ -224,11 +237,6 @@ namespace SkillBoxTask9
                 HandleErrorAsync,
                 recieverOptions,
                 cancellationToken);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ConsoleTB.Text = listToString(getFiles(pathToDownloads));
         }
 
         private static List<string> getFiles(string path)
@@ -264,6 +272,7 @@ namespace SkillBoxTask9
             }
             return to_return;
         }
+        #endregion
     }
 }
 
