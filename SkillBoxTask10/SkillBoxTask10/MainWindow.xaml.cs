@@ -56,6 +56,8 @@ namespace SkillBoxTask10
         static string alphabetChar = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
         static Dictionary<char, int> alphabetDict;
         static Random rand = new Random();
+
+        static CitiesTheGame citiesGame = new CitiesTheGame();
         #endregion
 
         #region Методы бота
@@ -68,17 +70,20 @@ namespace SkillBoxTask10
         {
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
-                userLastMessage = update.Message;
-                usersMessages.Add(userLastMessage);
-
+                #region Сохраняем сообщения в .json
+                usersMessages.Add(update.Message);
                 string json = JsonSerializer.Serialize(usersMessages);
-                using (var sw = new StreamWriter("..\\..\\..\\SystemFiles\\Messages.json"))
+                using (var sw = new StreamWriter($"..\\..\\..\\ProgrammFiles\\Сообщения за {DateTime.Now.ToString("g").Replace(':', '-')}.json"))
                 {
                     sw.Write(json);
                 }
+                #endregion
 
-                if (userLastMessage != null)
+                #region Обработка присланного сообщения
+                if (update.Message != null)
                 {
+                    userLastMessage = update.Message;
+
                     #region Если прислали команду
                     if (update.Message.Type == Telegram.Bot.Types.Enums.MessageType.Text)
                     {
@@ -105,8 +110,8 @@ namespace SkillBoxTask10
                         if (command == commands[2])
                         {
                             goroda = false;
-                            string files = listToString(getFiles(pathToDownloads));
-                            await botClient.SendTextMessageAsync(userLastMessage.Chat, listToString(getFiles(pathToDownloads)));
+                            string files = ListToString(DownloadedFiles(pathToDownloads));
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, ListToString(DownloadedFiles(pathToDownloads)));
                             return;
                         }
                         // Команда /get_file - 3
@@ -200,17 +205,8 @@ namespace SkillBoxTask10
                         if (command == commands[5])
                         {
                             goroda = true;
-                            int Letter;
-                            do
-                            {
-                                Letter = rand.Next(0, Cities.Length);
-                            } while (Cities[Letter].Count == 0);
-                            int City = rand.Next(0, Cities[Letter].Count);
-                            string botCity = Cities[Letter][City].Substring(0, 1).ToUpper() + Cities[Letter][City].Substring(1);
                             await botClient.SendTextMessageAsync(userLastMessage.Chat,
-                                $"Игра в города начинается, я первый (на правах глупого бота). Мой город: {botCity}, вам на {Cities[Letter][City].Last().ToString().ToUpper()}");
-                            lastLetter = Cities[Letter][City].Last();
-                            Cities[Letter].RemoveAt(City);
+                                $"Игра в города начинается, я первый (на правах глупого бота). Мой город: {citiesGame.FindRandomCity()}, вам на {citiesGame.lastLetterU}");
                             return;
                         }
                     }
@@ -255,65 +251,54 @@ namespace SkillBoxTask10
                     }
                     #endregion
 
-                    #region Игра в города или непонятное сообщение
-                    // Не играем в города, а команда непонятная
+                    #region Прочие случаи
+                    // Неклассифицируемый текст
                     if (!goroda)
                     {
                         await botClient.SendTextMessageAsync(userLastMessage.Chat, "Я пока не очень умный, поэтому не понимаю Вас. Отправьте /help для получения списка доступных команд.");
                     }
-                    // Играем в города
+                    #region Играем в города
                     else
                     {
                         string yourCityL = userLastMessage.Text.ToLower();
                         string yourCityU = yourCityL.Substring(0, 1).ToUpper() + yourCityL.Substring(1);
 
-                        // Город не на ту букву
-                        if (yourCityL[0] != lastLetter)
+                        // Проверяем город на первую букву
+                        if (!citiesGame.FirstCheck(yourCityL))
                         {
                             await botClient.SendTextMessageAsync(userLastMessage.Chat, $"Неправильная буква, вам на {lastLetter.ToString().ToUpper()}");
                         }
-                        // Проверяем город
-                        if (yourCityL[0] == lastLetter)
+                        else
                         {
-                            // Город есть в базе данных
-                            if (Cities[alphabetDict[lastLetter]].Contains(yourCityL.TrimEnd()))
+                            // Проверяем город на нахождение в базе данных
+                            if (citiesGame.CityInDatabase(yourCityL))
                             {
-                                Cities[alphabetDict[lastLetter]].Remove(yourCityL);
-                                lastLetter = yourCityL.Last();
                                 await botClient.SendTextMessageAsync(userLastMessage.Chat,
-                                    $"Принято! Ваш город {yourCityU}, значит мне на {lastLetter.ToString().ToUpper()}. " +
+                                    $"Принято! Ваш город {yourCityU}, значит мне на {citiesGame.lastLetterU}. " +
                                     $"Дайте подумать...");
-                                // Поражение бота
-                                if (Cities[alphabetDict[lastLetter]].Count == 0)
+
+                                if (citiesGame.noCities)
                                 {
-                                    await botClient.SendTextMessageAsync(userLastMessage.Chat, "Вы победили, сдаюсь!");
-                                }
-                                // Загадывание нового города
-                                else
-                                {
-                                    int idx;
-                                    do
-                                    {
-                                        idx = rand.Next(0, Cities[alphabetDict[lastLetter]].Count);
-                                    } while (false);
-                                    string botCity = Cities[alphabetDict[lastLetter]][idx].Substring(0, 1).ToUpper() + Cities[alphabetDict[lastLetter]][idx].Substring(1);
                                     await botClient.SendTextMessageAsync(userLastMessage.Chat,
-                                        $"Я загадываю город {botCity}, вам на {Cities[alphabetDict[lastLetter]][idx].Last().ToString().ToUpper()}");
-                                    int idx2 = alphabetDict[lastLetter];
-                                    lastLetter = Cities[alphabetDict[lastLetter]][idx].Last();
-                                    Cities[idx2].RemoveAt(idx);
+                                        $"Я проиграл. Больше не знаю городов на букву {citiesGame.lastLetterU}");
+                                    goroda = false;
+                                    return;
                                 }
+
+                                await botClient.SendTextMessageAsync(userLastMessage.Chat,
+                                    $"Я загадываю город {citiesGame.FindCity()}, вам на {citiesGame.lastLetterU}");
                             }
-                            // Города нет в базе данных, или он уже был
                             else
                             {
-                                await botClient.SendTextMessageAsync(userLastMessage.Chat, $"Не знаю такого города или он уже был. " +
-                                    $"Попробуйте назвать другой город на {lastLetter.ToString().ToUpper()}");
+                                await botClient.SendTextMessageAsync(userLastMessage.Chat,
+                                    $"Такого города или нет, или я его не знаю. Попробуйте назвать другой город на {citiesGame.lastLetterU}");
                             }
                         }
                     }
                     #endregion
+                    #endregion
                 }
+                #endregion
             }
         }
 
@@ -335,43 +320,16 @@ namespace SkillBoxTask10
             for (int i = 0; i < commands.Length; i++)
                 commandsList += $"{commands[i]}\n";
             startMessage = $"Готов работать день и ночь!\n{commandsList}";
-
-            #region Формирование списка доступных городов
-            // Формирование алфавита
-            alphabetDict = new Dictionary<char, int>();
-            for (int i = 0; i < alphabetChar.Length; i++)
-            {
-                alphabetDict.Add(alphabetChar[i], i);
-            }
-            // Формирование списка городов
-            for (int i = 0; i < Cities.Length; i++)
-            {
-                Cities[i] = new List<string>();
-            }
-            HashSet<string> uniqueCities = new HashSet<string>();
-            using (StreamReader sr = new StreamReader("..\\..\\..\\SystemFiles\\Города.txt"))
-            {
-                while (!sr.EndOfStream)
-                {
-                    string line = sr.ReadLine();
-                    line = line.ToLower();
-                    line = line.Split('(')[0].TrimEnd();
-                    if (!line.Contains("*"))
-                        if (uniqueCities.Add(line))
-                        {
-                            Cities[alphabetDict[line[0]]].Add(line);
-                        }
-                }
-            }
-            #endregion
         }
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            #region Запуск бота 
             TextRange tr = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
             tr.Text =
             $"Запущен бот {bot.GetMeAsync().Result.FirstName}\n";
             tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+
             var cts = new CancellationTokenSource();
             var cancellationToken = cts.Token;
             var recieverOptions = new ReceiverOptions();
@@ -380,7 +338,9 @@ namespace SkillBoxTask10
                 HandleErrorAsync,
                 recieverOptions,
                 cancellationToken);
+            #endregion
 
+            #region Считывание сообщений, которые приходят боту
             while (true)
             {
                 await Task.Run(() =>
@@ -405,9 +365,10 @@ namespace SkillBoxTask10
 
                 MessagesList.Items.Add($"Сообщение #{usersMessages.Count}");
             }
+            #endregion
         }
 
-        private static List<string> getFiles(string path)
+        private static List<string> DownloadedFiles(string path)
         {
             var dirList = Directory.GetDirectories(path);
             foreach (var dirPath in directoriesForDownloading)
@@ -431,7 +392,7 @@ namespace SkillBoxTask10
             return files;
         }
 
-        private static string listToString(List<string> list)
+        private static string ListToString(List<string> list)
         {
             string to_return = "";
             foreach (var item in list)
