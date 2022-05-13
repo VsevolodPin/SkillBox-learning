@@ -1,23 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
-using Telegram.Bot.Exceptions;
-using System.Threading;
-using System.IO;
 using Telegram.Bot.Types.InputFiles;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace SkillBoxTask9
+namespace SkillBoxTask10
 {
-    public partial class Form1 : Form
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+
+    public partial class MainWindow : Window
     {
         #region Инициализация бота
         const string token = "5293507937:AAGyuOGI5-25ztw5_YOmFiSq0z9hqJgyUWM";
@@ -35,6 +45,11 @@ namespace SkillBoxTask9
         static string[] commands = { "/start", "/help", "/flist", "/fget [имя файла]", "/ask [ваш вопрос]", "/cities" };
         static string startMessage = "";
         static string commandsList = "";
+
+        static string userLastMessageString;
+        static Message userLastMessage;
+        static List<Message> usersMessages = new List<Message>();
+
         static bool goroda = false;
         static List<string>[] Cities = new List<string>[33];
         static char lastLetter;
@@ -53,28 +68,37 @@ namespace SkillBoxTask9
         {
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
-                var message = update.Message;
+                userLastMessage = update.Message;
+                usersMessages.Add(userLastMessage);
 
-                if (message != null)
+                string json = JsonSerializer.Serialize(usersMessages);
+                using (var sw = new StreamWriter("..\\..\\..\\SystemFiles\\Messages.json"))
+                {
+                    sw.Write(json);
+                }
+
+                if (userLastMessage != null)
                 {
                     #region Если прислали команду
                     if (update.Message.Type == Telegram.Bot.Types.Enums.MessageType.Text)
                     {
-                        var commandText = message.Text.Split(' ').ToList<string>();
+                        userLastMessageString = userLastMessage.Text;
+
+                        var commandText = userLastMessage.Text.Split(' ').ToList<string>();
                         string command = commandText[0].ToLower();
 
                         // Команда /start - 0
                         if (command == commands[0])
                         {
                             goroda = false;
-                            await botClient.SendTextMessageAsync(message.Chat, startMessage);
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, startMessage);
                             return;
                         }
                         // Команда /help - 1
                         if (command == commands[1])
                         {
                             goroda = false;
-                            await botClient.SendTextMessageAsync(message.Chat, commandsList);
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, commandsList);
                             return;
                         }
                         // Команда /files_list - 2
@@ -82,7 +106,7 @@ namespace SkillBoxTask9
                         {
                             goroda = false;
                             string files = listToString(getFiles(pathToDownloads));
-                            await botClient.SendTextMessageAsync(message.Chat, listToString(getFiles(pathToDownloads)));
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, listToString(getFiles(pathToDownloads)));
                             return;
                         }
                         // Команда /get_file - 3
@@ -113,28 +137,28 @@ namespace SkillBoxTask9
                                                 using (var fs = System.IO.File.Open(file, FileMode.Open))
                                                 {
                                                     InputOnlineFile audioToSend = new InputOnlineFile(fs, file.Split("\\").Last());
-                                                    await botClient.SendAudioAsync(message.Chat.Id, audioToSend);
+                                                    await botClient.SendAudioAsync(userLastMessage.Chat.Id, audioToSend);
                                                 }
                                                 break;
                                             case 1:
                                                 using (var fs = System.IO.File.Open(file, FileMode.Open))
                                                 {
                                                     InputOnlineFile docToSend = new InputOnlineFile(fs, file.Split("\\").Last());
-                                                    await botClient.SendDocumentAsync(message.Chat.Id, docToSend);
+                                                    await botClient.SendDocumentAsync(userLastMessage.Chat.Id, docToSend);
                                                 }
                                                 break;
                                             case 2:
                                                 using (var fs = System.IO.File.Open(file, FileMode.Open))
                                                 {
                                                     InputOnlineFile picToSend = new InputOnlineFile(fs, file.Split("\\").Last());
-                                                    await botClient.SendPhotoAsync(message.Chat.Id, picToSend);
+                                                    await botClient.SendPhotoAsync(userLastMessage.Chat.Id, picToSend);
                                                 }
                                                 break;
                                             case 3:
                                                 using (var fs = System.IO.File.Open(file, FileMode.Open))
                                                 {
                                                     InputOnlineFile textToSend = new InputOnlineFile(fs, file.Split("\\").Last());
-                                                    await botClient.SendDocumentAsync(message.Chat.Id, textToSend);
+                                                    await botClient.SendDocumentAsync(userLastMessage.Chat.Id, textToSend);
                                                 }
                                                 break;
                                             default:
@@ -145,7 +169,7 @@ namespace SkillBoxTask9
 
                                 }
                             }
-                            await botClient.SendTextMessageAsync(message.Chat, "Указанного файла не существует. Укажите другой.");
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, "Указанного файла не существует. Укажите другой.");
                             return;
                         }
                         // Команда /ask - 4
@@ -163,12 +187,12 @@ namespace SkillBoxTask9
                             "Получается, что:",
                             "К сожалению:"};
 
-                            await botClient.SendTextMessageAsync(message.From.Id, answers[rand.Next(0, answers.Length)]);
+                            await botClient.SendTextMessageAsync(userLastMessage.From.Id, answers[rand.Next(0, answers.Length)]);
                             var files = Directory.GetFiles(ballDirectory);
                             using (var fs = System.IO.File.Open($"{files[rand.Next(0, files.Length)]}", FileMode.Open))
                             {
                                 InputOnlineFile picToSend = new InputOnlineFile(fs, "Answer");
-                                await botClient.SendPhotoAsync(message.Chat.Id, picToSend);
+                                await botClient.SendPhotoAsync(userLastMessage.Chat.Id, picToSend);
                             }
                             return;
                         }
@@ -183,7 +207,7 @@ namespace SkillBoxTask9
                             } while (Cities[Letter].Count == 0);
                             int City = rand.Next(0, Cities[Letter].Count);
                             string botCity = Cities[Letter][City].Substring(0, 1).ToUpper() + Cities[Letter][City].Substring(1);
-                            await botClient.SendTextMessageAsync(message.Chat,
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat,
                                 $"Игра в города начинается, я первый (на правах глупого бота). Мой город: {botCity}, вам на {Cities[Letter][City].Last().ToString().ToUpper()}");
                             lastLetter = Cities[Letter][City].Last();
                             Cities[Letter].RemoveAt(City);
@@ -193,59 +217,60 @@ namespace SkillBoxTask9
                     #endregion
 
                     #region Если прислали картинку
-                    if (message.Type == Telegram.Bot.Types.Enums.MessageType.Photo)
+                    if (userLastMessage.Type == Telegram.Bot.Types.Enums.MessageType.Photo)
                     {
-                        var file = await bot.GetFileAsync(message.Photo[message.Photo.Length - 1].FileId);
+                        var file = await bot.GetFileAsync(userLastMessage.Photo[userLastMessage.Photo.Length - 1].FileId);
                         using (var saveImageStream = new FileStream(directoriesForDownloading[2] + "\\" + file.FilePath.Split('/').Last(), FileMode.CreateNew))
                         {
                             await bot.DownloadFileAsync(file.FilePath, saveImageStream);
                         }
-                        await bot.SendTextMessageAsync(message.Chat, "Image save");
+                        await bot.SendTextMessageAsync(userLastMessage.Chat, "Image save");
                         return;
                     }
                     #endregion
 
                     #region Если прислали аудиозапись
-                    if (message.Type == Telegram.Bot.Types.Enums.MessageType.Voice)
+                    if (userLastMessage.Type == Telegram.Bot.Types.Enums.MessageType.Voice)
                     {
-                        var file = await bot.GetFileAsync(message.Voice.FileId);
+                        var file = await bot.GetFileAsync(userLastMessage.Voice.FileId);
                         using (var saveImageStream = new FileStream(directoriesForDownloading[0] + "\\" + file.FilePath.Split('/').Last(), FileMode.CreateNew))
                         {
                             await bot.DownloadFileAsync(file.FilePath, saveImageStream);
                         }
-                        await bot.SendTextMessageAsync(message.Chat, "Voice save");
+                        await bot.SendTextMessageAsync(userLastMessage.Chat, "Voice save");
                         return;
                     }
                     #endregion
 
                     #region Если прислали документ
-                    if (message.Type == Telegram.Bot.Types.Enums.MessageType.Document)
+                    if (userLastMessage.Type == Telegram.Bot.Types.Enums.MessageType.Document)
                     {
-                        var file = await bot.GetFileAsync(message.Document.FileId);
+                        var file = await bot.GetFileAsync(userLastMessage.Document.FileId);
                         using (var saveImageStream = new FileStream(directoriesForDownloading[1] + "\\" + file.FilePath.Split('/').Last(), FileMode.CreateNew))
                         {
                             await bot.DownloadFileAsync(file.FilePath, saveImageStream);
                         }
-                        await bot.SendTextMessageAsync(message.Chat, "Document save");
+                        await bot.SendTextMessageAsync(userLastMessage.Chat, "Document save");
                         return;
                     }
                     #endregion
 
+                    #region Игра в города или непонятное сообщение
                     // Не играем в города, а команда непонятная
                     if (!goroda)
                     {
-                        await botClient.SendTextMessageAsync(message.Chat, "Я пока не очень умный, поэтому не понимаю Вас. Отправьте /help для получения списка доступных команд.");
+                        await botClient.SendTextMessageAsync(userLastMessage.Chat, "Я пока не очень умный, поэтому не понимаю Вас. Отправьте /help для получения списка доступных команд.");
                     }
                     // Играем в города
                     else
                     {
-                        string yourCityL = message.Text.ToLower();
+                        string yourCityL = userLastMessage.Text.ToLower();
                         string yourCityU = yourCityL.Substring(0, 1).ToUpper() + yourCityL.Substring(1);
 
                         // Город не на ту букву
                         if (yourCityL[0] != lastLetter)
                         {
-                            await botClient.SendTextMessageAsync(message.Chat, $"Неправильная буква, вам на {lastLetter.ToString().ToUpper()}");
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, $"Неправильная буква, вам на {lastLetter.ToString().ToUpper()}");
                         }
                         // Проверяем город
                         if (yourCityL[0] == lastLetter)
@@ -255,13 +280,13 @@ namespace SkillBoxTask9
                             {
                                 Cities[alphabetDict[lastLetter]].Remove(yourCityL);
                                 lastLetter = yourCityL.Last();
-                                await botClient.SendTextMessageAsync(message.Chat,
+                                await botClient.SendTextMessageAsync(userLastMessage.Chat,
                                     $"Принято! Ваш город {yourCityU}, значит мне на {lastLetter.ToString().ToUpper()}. " +
                                     $"Дайте подумать...");
                                 // Поражение бота
                                 if (Cities[alphabetDict[lastLetter]].Count == 0)
                                 {
-                                    await botClient.SendTextMessageAsync(message.Chat, "Вы победили, сдаюсь!");
+                                    await botClient.SendTextMessageAsync(userLastMessage.Chat, "Вы победили, сдаюсь!");
                                 }
                                 // Загадывание нового города
                                 else
@@ -272,7 +297,7 @@ namespace SkillBoxTask9
                                         idx = rand.Next(0, Cities[alphabetDict[lastLetter]].Count);
                                     } while (false);
                                     string botCity = Cities[alphabetDict[lastLetter]][idx].Substring(0, 1).ToUpper() + Cities[alphabetDict[lastLetter]][idx].Substring(1);
-                                    await botClient.SendTextMessageAsync(message.Chat,
+                                    await botClient.SendTextMessageAsync(userLastMessage.Chat,
                                         $"Я загадываю город {botCity}, вам на {Cities[alphabetDict[lastLetter]][idx].Last().ToString().ToUpper()}");
                                     int idx2 = alphabetDict[lastLetter];
                                     lastLetter = Cities[alphabetDict[lastLetter]][idx].Last();
@@ -282,11 +307,12 @@ namespace SkillBoxTask9
                             // Города нет в базе данных, или он уже был
                             else
                             {
-                                await botClient.SendTextMessageAsync(message.Chat, $"Не знаю такого города или он уже был. " +
+                                await botClient.SendTextMessageAsync(userLastMessage.Chat, $"Не знаю такого города или он уже был. " +
                                     $"Попробуйте назвать другой город на {lastLetter.ToString().ToUpper()}");
                             }
                         }
                     }
+                    #endregion
                 }
             }
         }
@@ -300,8 +326,8 @@ namespace SkillBoxTask9
         }
         #endregion
 
-        #region Методы формы
-        public Form1()
+        #region Методы окна
+        public MainWindow()
         {
             InitializeComponent();
 
@@ -340,10 +366,12 @@ namespace SkillBoxTask9
             #endregion
         }
 
-        private void StartButton_Click(object sender, EventArgs e)
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            ConsoleTB.Text += $"Запущен бот {bot.GetMeAsync().Result.FirstName}\n";
-
+            TextRange tr = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
+            tr.Text =
+            $"Запущен бот {bot.GetMeAsync().Result.FirstName}\n";
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
             var cts = new CancellationTokenSource();
             var cancellationToken = cts.Token;
             var recieverOptions = new ReceiverOptions();
@@ -352,6 +380,31 @@ namespace SkillBoxTask9
                 HandleErrorAsync,
                 recieverOptions,
                 cancellationToken);
+
+            while (true)
+            {
+                await Task.Run(() =>
+                {
+                    while (String.IsNullOrEmpty(userLastMessageString))
+                    {
+                        // Типа ждем
+                        Thread.Sleep(10);
+                    }
+                });
+                string chatName = userLastMessage.Chat.Username;
+                string userName = userLastMessage.From.Username;
+                string dateOfMessage = userLastMessage.Date.ToString("G");
+                tr = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
+                tr.Text =
+                    $"\n" +
+                    $"Получено сообщение: '{userLastMessageString}'.\n" +
+                    $"Отправитель: {userName}. " +
+                    $"Дата: {dateOfMessage}. ";
+                tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+                userLastMessageString = String.Empty;
+
+                MessagesList.Items.Add($"Сообщение #{usersMessages.Count}");
+            }
         }
 
         private static List<string> getFiles(string path)
@@ -387,7 +440,37 @@ namespace SkillBoxTask9
             }
             return to_return;
         }
+
+        private void MessagesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+            string chatName = message.Chat.Username;
+            string userName = message.From.Username;
+            string dateOfMessage = message.Date.ToString("G");
+            TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
+            tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
+            tr.Text =
+                $"Получено сообщение: '{message.Text}'.\n" +
+                $"Отправитель: {userName}. " +
+                $"Дата: {dateOfMessage}. ";
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            userLastMessageString = String.Empty;
+        }
+
+        private async void SendResponse_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+                TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
+                await bot.SendTextMessageAsync(message.Chat, textRange.Text);
+            }
+            catch
+            {
+                TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
+                textRange.Text = "Вы не выбрали контакт, которому хотите отправить сообщение.";
+            }
+        }
         #endregion
     }
 }
-
