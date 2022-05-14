@@ -314,10 +314,10 @@ namespace SkillBoxTask10
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             #region Запуск бота 
-            TextRange textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
-            textRange.Text =
-            $"Запущен бот {bot.GetMeAsync().Result.FirstName}\n";
-            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            //TextRange textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
+            //textRange.Text =
+            //$"Запущен бот {bot.GetMeAsync().Result.FirstName}\n";
+            //textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
 
             var cts = new CancellationTokenSource();
             var cancellationToken = cts.Token;
@@ -340,19 +340,10 @@ namespace SkillBoxTask10
                         Thread.Sleep(10);
                     }
                 });
-                string chatName = userLastMessage.Chat.Username;
-                string userName = userLastMessage.From.Username;
-                string dateOfMessage = userLastMessage.Date.ToString("G");
-                textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
-                textRange.Text =
-                    $"\n" +
-                    $"Получено сообщение: '{userLastMessageString}'.\n" +
-                    $"Отправитель: {userName}. " +
-                    $"Дата: {dateOfMessage}. ";
-                textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+                string messageStr = $"{userLastMessage.From.Username}: {userLastMessage.Text}";
+                string messageToAdd = SplitToLines(messageStr);
+                MessagesList.Items.Add(messageToAdd);
                 userLastMessageString = String.Empty;
-
-                MessagesList.Items.Add($"Сообщение #{usersMessages.Count}");
             }
             #endregion
         }
@@ -361,7 +352,8 @@ namespace SkillBoxTask10
         {
             try
             {
-                var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+                //var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+                var message = usersMessages[MessagesList.SelectedIndex];
                 TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
                 await bot.SendTextMessageAsync(message.Chat, textRange.Text);
             }
@@ -379,11 +371,7 @@ namespace SkillBoxTask10
             usersMessages.Clear();
             MessagesList.Items.Clear();
             TextRange textRange;
-            textRange = new TextRange(ConsoleOut.Document.ContentStart, ConsoleOut.Document.ContentEnd);
-            textRange.Text = "";
             textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
-            textRange.Text = "";
-            textRange = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
             textRange.Text = "";
         }
 
@@ -422,16 +410,9 @@ namespace SkillBoxTask10
                     usersMessages = JsonSerializer.Deserialize<List<Message>>(jsonString)!;
                 }
 
-                TextRange textRange;
-                textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
                 for (int i = 0; i < usersMessages.Count; i++)
                 {
-                    textRange.Text +=
-                                        $"Получено сообщение: '{usersMessages[i].Text}'.\n" +
-                                        $"Отправитель: {usersMessages[i].From.Username}. " +
-                                        $"Дата: {usersMessages[i].Date.ToString("G")}. \n";
-                    textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-                    MessagesList.Items.Add($"Сообщение #{i + 1}");
+                    MessagesList.Items.Add($"{usersMessages[i].From.Username}: {usersMessages[i].Text}");
                 }
             }
         }
@@ -447,21 +428,21 @@ namespace SkillBoxTask10
             #endregion
         }
         #endregion
-        
+
         private void MessagesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
-            string chatName = message.Chat.Username;
-            string userName = message.From.Username;
-            string dateOfMessage = message.Date.ToString("G");
-            TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
-            tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
-            tr.Text =
-                $"Получено сообщение: '{message.Text}'.\n" +
-                $"Отправитель: {userName}. " +
-                $"Дата: {dateOfMessage}. ";
-            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-            userLastMessageString = String.Empty;
+            //var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+            //string chatName = message.Chat.Username;
+            //string userName = message.From.Username;
+            //string dateOfMessage = message.Date.ToString("G");
+            //TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
+            //tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
+            //tr.Text =
+            //    $"Получено сообщение: '{message.Text}'.\n" +
+            //    $"Отправитель: {userName}. " +
+            //    $"Дата: {dateOfMessage}. ";
+            //tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            //userLastMessageString = String.Empty;
         }
 
         private static List<string> DownloadedFiles(string path)
@@ -497,6 +478,45 @@ namespace SkillBoxTask10
             }
             return to_return;
         }
+
+        private string SplitToLines(string text)
+        {
+            var messageWords = text.Split(' ');
+            string messageToAdd = "";
+            if (text.Length > 90 * this.ActualWidth / 835.0)
+            {
+                int word = 0;
+                for (int i = 0; i < text.Length / 80 + 1; i++)
+                {
+                    string line = "";
+                    while (line.Length < 90 * this.ActualWidth / 835.0)
+                    {
+                        if (word != messageWords.Length)
+                        {
+                            line += messageWords[word] + " ";
+                            word++;
+                        }
+                        else
+                            break;
+                    }
+                    messageToAdd += line + "\n";
+                }
+            }
+            else
+            {
+                messageToAdd = text;
+            }
+            return messageToAdd;
+        }
         #endregion
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MessagesList.Items.Clear();
+            for (int i = 0; i < usersMessages.Count; i++)
+            {
+                MessagesList.Items.Add(SplitToLines($"{usersMessages[i].From.Username}: {usersMessages[i].Text}"));
+            }
+        }
     }
 }
