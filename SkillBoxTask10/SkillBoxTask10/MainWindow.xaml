@@ -16,25 +16,25 @@
         <Grid.Background>
             <ImageBrush ImageSource="/Background.jpg" Stretch="UniformToFill"/>
         </Grid.Background>
-        <Button x:Name="StartButton" Content="Начать" Click="StartButton_Click" Margin="0,0,10,17" Background="#E5FFFFFF" MinWidth="100" MinHeight="30" MaxWidth="100" MaxHeight="30" HorizontalAlignment="Right" Width="100" Height="30" VerticalAlignment="Bottom" FontFamily="Verdana" BorderBrush="#FF0A0B4E" Foreground="#DD000000" Grid.Column="1"/>
-        <RichTextBox x:Name="ConsoleOut" BorderThickness="3,3,3,3" Margin="10,45,4,197" BorderBrush="#B24E0244" FontSize="14" FontFamily="Verdana" Background="#E5FFFFFF" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" IsReadOnly="True" >
+        <Button x:Name="StartButton" Content="Начать" Click="StartButton_Click" Margin="0,0,10,17" Background="#E5FFFFFF" MinWidth="100" MinHeight="30" MaxWidth="100" MaxHeight="30" HorizontalAlignment="Right" Width="100" Height="30" VerticalAlignment="Bottom" FontFamily="Verdana" BorderBrush="#7F000000" Foreground="#DD000000" Grid.Column="1"/>
+        <RichTextBox x:Name="ConsoleOut" BorderThickness="1,1,1,1" Margin="10,45,4,197" BorderBrush="#7F000000" FontSize="14" FontFamily="Verdana" Background="#E5FFFFFF" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" IsReadOnly="True" >
             <FlowDocument/>
         </RichTextBox>
-        <ListBox x:Name="MessagesList" Margin="1,45,10,197" d:ItemsSource="{d:SampleData ItemCount=5}" Background="#E5FFFFFF" BorderThickness="3,3,3,3" BorderBrush="#B24E0244" Grid.Column="1" MouseDoubleClick="MessagesList_MouseDoubleClick" FontFamily="Verdana" FontSize="14" />
-        <RichTextBox x:Name="ShowSelected" BorderThickness="3,3,3,3" Margin="1,0,10,74" BorderBrush="#B24E0244" FontSize="14" FontFamily="Verdana" Background="#E5FFFFFF" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Grid.Column="1" IsReadOnly="True" Height="118" VerticalAlignment="Bottom" >
+        <ListBox x:Name="MessagesList" Margin="1,45,10,197" d:ItemsSource="{d:SampleData ItemCount=5}" Background="#E5FFFFFF" BorderThickness="1,1,1,1" BorderBrush="#7F000000" Grid.Column="1" MouseDoubleClick="MessagesList_MouseDoubleClick" FontFamily="Verdana" FontSize="14" />
+        <RichTextBox x:Name="ShowSelected" BorderThickness="1,1,1,1" Margin="1,0,10,74" BorderBrush="#7F000000" FontSize="14" FontFamily="Verdana" Background="#E5FFFFFF" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Grid.Column="1" IsReadOnly="True" Height="118" VerticalAlignment="Bottom" >
             <FlowDocument/>
         </RichTextBox>
-        <RichTextBox x:Name="ResponseText" BorderThickness="3,3,3,3" Margin="10,0,4,74" BorderBrush="#B24E0244" FontSize="14" FontFamily="Verdana" Background="#E5FFFFFF" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Height="118" VerticalAlignment="Bottom" >
+        <RichTextBox x:Name="ResponseText" BorderThickness="1,1,1,1" Margin="10,0,4,74" BorderBrush="#7F000000" FontSize="14" FontFamily="Verdana" Background="#E5FFFFFF" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Height="118" VerticalAlignment="Bottom" >
             <FlowDocument/>
         </RichTextBox>
-        <Button x:Name="SendResponse" Content="Ответить" Click="SendResponse_Click" Margin="10,0,0,17" Background="#E5FFFFFF" MinWidth="100" MinHeight="30" MaxWidth="100" MaxHeight="30" Height="30" VerticalAlignment="Bottom" FontFamily="Verdana" BorderBrush="#FF0A0B4E" Foreground="#DD000000" HorizontalAlignment="Left" Width="100"/>
+        <Button x:Name="SendResponse" Content="Ответить" Click="SendResponse_Click" Margin="10,0,0,17" Background="#E5FFFFFF" MinWidth="100" MinHeight="30" MaxWidth="100" MaxHeight="30" Height="30" VerticalAlignment="Bottom" FontFamily="Verdana" BorderBrush="#7F000000" Foreground="#DD000000" HorizontalAlignment="Left" Width="100"/>
         <Menu Height="40" VerticalAlignment="Top">
-            <MenuItem Header="История" BorderThickness="1,1,1,2" BorderBrush="#B24E0244" Height="38" Background="#E5FFFFFF" FontFamily="Verdana" FontSize="14">
+            <MenuItem Header="История" BorderThickness="1,1,1,1" BorderBrush="#7F000000" Height="30" Background="#E5FFFFFF" FontFamily="Verdana" FontSize="14">
                 <MenuItem Header="Очистить" Click="MenuClear_Click"></MenuItem>
                 <MenuItem Header="Сохранить переписку" Click="MenuSaveAs_Click"></MenuItem>
                 <MenuItem Header="Загрузить переписку" Click="MenuLoad_Click"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Выход с сохранением" BorderThickness="0,1,1,2" BorderBrush="#B24E0244" Height="38" Background="#E5FFFFFF" FontFamily="Verdana" FontSize="14" Click="MenuExitAndSave_Click"></MenuItem>
+            <MenuItem Header="Выход с сохранением" BorderThickness="0,1,1,1" BorderBrush="#7F000000" Height="30" Background="#E5FFFFFF" FontFamily="Verdana" FontSize="14" Click="MenuExitAndSave_Click"></MenuItem>
         </Menu>
     </Grid>
 </Window>

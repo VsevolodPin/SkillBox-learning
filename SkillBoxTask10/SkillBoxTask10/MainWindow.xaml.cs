@@ -356,6 +356,7 @@ namespace SkillBoxTask10
             }
             #endregion
         }
+
         private async void SendResponse_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -371,22 +372,6 @@ namespace SkillBoxTask10
             }
         }
         #endregion
-
-        private void MessagesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
-            string chatName = message.Chat.Username;
-            string userName = message.From.Username;
-            string dateOfMessage = message.Date.ToString("G");
-            TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
-            tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
-            tr.Text =
-                $"Получено сообщение: '{message.Text}'.\n" +
-                $"Отправитель: {userName}. " +
-                $"Дата: {dateOfMessage}. ";
-            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-            userLastMessageString = String.Empty;
-        }
 
         #region Обработка меню
         private void MenuClear_Click(object sender, RoutedEventArgs e)
@@ -462,6 +447,22 @@ namespace SkillBoxTask10
             #endregion
         }
         #endregion
+        
+        private void MessagesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+            string chatName = message.Chat.Username;
+            string userName = message.From.Username;
+            string dateOfMessage = message.Date.ToString("G");
+            TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
+            tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
+            tr.Text =
+                $"Получено сообщение: '{message.Text}'.\n" +
+                $"Отправитель: {userName}. " +
+                $"Дата: {dateOfMessage}. ";
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            userLastMessageString = String.Empty;
+        }
 
         private static List<string> DownloadedFiles(string path)
         {
