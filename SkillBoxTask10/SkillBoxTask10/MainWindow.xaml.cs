@@ -51,10 +51,6 @@ namespace SkillBoxTask10
         static List<Message> usersMessages = new List<Message>();
 
         static bool goroda = false;
-        static List<string>[] Cities = new List<string>[33];
-        static char lastLetter;
-        static string alphabetChar = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-        static Dictionary<char, int> alphabetDict;
         static Random rand = new Random();
 
         static CitiesTheGame citiesGame = new CitiesTheGame();
@@ -70,19 +66,11 @@ namespace SkillBoxTask10
         {
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
-                #region Сохраняем сообщения в .json
-                usersMessages.Add(update.Message);
-                string json = JsonSerializer.Serialize(usersMessages);
-                using (var sw = new StreamWriter($"..\\..\\..\\ProgrammFiles\\Сообщения за {DateTime.Now.ToString("g").Replace(':', '-')}.json"))
-                {
-                    sw.Write(json);
-                }
-                #endregion
-
                 #region Обработка присланного сообщения
                 if (update.Message != null)
                 {
                     userLastMessage = update.Message;
+                    usersMessages.Add(update.Message);
 
                     #region Если прислали команду
                     if (update.Message.Type == Telegram.Bot.Types.Enums.MessageType.Text)
@@ -266,7 +254,7 @@ namespace SkillBoxTask10
                         // Проверяем город на первую букву
                         if (!citiesGame.FirstCheck(yourCityL))
                         {
-                            await botClient.SendTextMessageAsync(userLastMessage.Chat, $"Неправильная буква, вам на {lastLetter.ToString().ToUpper()}");
+                            await botClient.SendTextMessageAsync(userLastMessage.Chat, $"Неправильная буква, вам на {citiesGame.lastLetterU}");
                         }
                         else
                         {
@@ -322,13 +310,14 @@ namespace SkillBoxTask10
             startMessage = $"Готов работать день и ночь!\n{commandsList}";
         }
 
+        #region Обработка кнопок
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             #region Запуск бота 
-            TextRange tr = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
-            tr.Text =
+            TextRange textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
+            textRange.Text =
             $"Запущен бот {bot.GetMeAsync().Result.FirstName}\n";
-            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
 
             var cts = new CancellationTokenSource();
             var cancellationToken = cts.Token;
@@ -354,19 +343,125 @@ namespace SkillBoxTask10
                 string chatName = userLastMessage.Chat.Username;
                 string userName = userLastMessage.From.Username;
                 string dateOfMessage = userLastMessage.Date.ToString("G");
-                tr = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
-                tr.Text =
+                textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
+                textRange.Text =
                     $"\n" +
                     $"Получено сообщение: '{userLastMessageString}'.\n" +
                     $"Отправитель: {userName}. " +
                     $"Дата: {dateOfMessage}. ";
-                tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+                textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
                 userLastMessageString = String.Empty;
 
                 MessagesList.Items.Add($"Сообщение #{usersMessages.Count}");
             }
             #endregion
         }
+        private async void SendResponse_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+                TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
+                await bot.SendTextMessageAsync(message.Chat, textRange.Text);
+            }
+            catch
+            {
+                TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
+                textRange.Text = "Вы не выбрали контакт, которому хотите отправить сообщение.";
+            }
+        }
+        #endregion
+
+        private void MessagesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
+            string chatName = message.Chat.Username;
+            string userName = message.From.Username;
+            string dateOfMessage = message.Date.ToString("G");
+            TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
+            tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
+            tr.Text =
+                $"Получено сообщение: '{message.Text}'.\n" +
+                $"Отправитель: {userName}. " +
+                $"Дата: {dateOfMessage}. ";
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            userLastMessageString = String.Empty;
+        }
+
+        #region Обработка меню
+        private void MenuClear_Click(object sender, RoutedEventArgs e)
+        {
+            usersMessages.Clear();
+            MessagesList.Items.Clear();
+            TextRange textRange;
+            textRange = new TextRange(ConsoleOut.Document.ContentStart, ConsoleOut.Document.ContentEnd);
+            textRange.Text = "";
+            textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
+            textRange.Text = "";
+            textRange = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
+            textRange.Text = "";
+        }
+
+        private void MenuSaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.Filter = "JSON Files (*.json)|*.json";
+
+            var result = dlg.ShowDialog();
+            if (result == true)
+            {
+                #region Сохраняем сообщения в .json
+                string path = dlg.FileName;
+                string json = JsonSerializer.Serialize(usersMessages);
+                using (var sw = new StreamWriter(path))
+                {
+                    sw.Write(json);
+                }
+                #endregion
+            }
+        }
+
+        private void MenuLoad_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.Filter = "JSON Files (*.json)|*.json";
+
+            var result = dlg.ShowDialog();
+            if (result == true)
+            {
+                MenuClear_Click(sender, e);
+                using (StreamReader sr = new StreamReader(dlg.FileName))
+                {
+                    string jsonString = sr.ReadToEnd();
+                    usersMessages = JsonSerializer.Deserialize<List<Message>>(jsonString)!;
+                }
+
+                TextRange textRange;
+                textRange = new TextRange(ConsoleOut.Document.ContentEnd, ConsoleOut.Document.ContentEnd);
+                for (int i = 0; i < usersMessages.Count; i++)
+                {
+                    textRange.Text +=
+                                        $"Получено сообщение: '{usersMessages[i].Text}'.\n" +
+                                        $"Отправитель: {usersMessages[i].From.Username}. " +
+                                        $"Дата: {usersMessages[i].Date.ToString("G")}. \n";
+                    textRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+                    MessagesList.Items.Add($"Сообщение #{i + 1}");
+                }
+            }
+        }
+
+        private void MenuExitAndSave_Click(object sender, RoutedEventArgs e)
+        {
+            #region Сохраняем сообщения в .json
+            string json = JsonSerializer.Serialize(usersMessages);
+            using (var sw = new StreamWriter($"..\\..\\..\\ProgrammFiles\\Сообщения за {DateTime.Now.ToString("g").Replace(':', '-')}.json"))
+            {
+                sw.Write(json);
+            }
+            #endregion
+        }
+        #endregion
 
         private static List<string> DownloadedFiles(string path)
         {
@@ -400,37 +495,6 @@ namespace SkillBoxTask10
                 to_return += $"{item}\n";
             }
             return to_return;
-        }
-
-        private void MessagesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
-            string chatName = message.Chat.Username;
-            string userName = message.From.Username;
-            string dateOfMessage = message.Date.ToString("G");
-            TextRange tr = new TextRange(ShowSelected.Document.ContentEnd, ShowSelected.Document.ContentEnd);
-            tr = new TextRange(ShowSelected.Document.ContentStart, ShowSelected.Document.ContentEnd);
-            tr.Text =
-                $"Получено сообщение: '{message.Text}'.\n" +
-                $"Отправитель: {userName}. " +
-                $"Дата: {dateOfMessage}. ";
-            tr.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-            userLastMessageString = String.Empty;
-        }
-
-        private async void SendResponse_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var message = usersMessages[int.Parse(MessagesList.SelectedItem.ToString().Split('#')[1]) - 1];
-                TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
-                await bot.SendTextMessageAsync(message.Chat, textRange.Text);
-            }
-            catch
-            {
-                TextRange textRange = new TextRange(ResponseText.Document.ContentStart, ResponseText.Document.ContentEnd);
-                textRange.Text = "Вы не выбрали контакт, которому хотите отправить сообщение.";
-            }
         }
         #endregion
     }
