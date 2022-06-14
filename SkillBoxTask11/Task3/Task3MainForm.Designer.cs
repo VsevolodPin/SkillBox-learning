@@ -470,6 +470,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.AddClientBT);
             this.Name = "Task3MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.CreateClientGroup.ResumeLayout(false);

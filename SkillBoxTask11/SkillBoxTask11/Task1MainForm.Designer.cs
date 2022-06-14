@@ -84,6 +84,7 @@
             this.ClientsListBox.Name = "ClientsListBox";
             this.ClientsListBox.Size = new System.Drawing.Size(294, 319);
             this.ClientsListBox.TabIndex = 1;
+            this.ClientsListBox.SelectedIndexChanged += new System.EventHandler(this.ClientsListBox_SelectedIndexChanged);
             this.ClientsListBox.DoubleClick += new System.EventHandler(this.ClientsListBox_DoubleClick);
             // 
             // groupBox1
@@ -379,6 +380,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.AddClientBT);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.CreateClientGroup.ResumeLayout(false);

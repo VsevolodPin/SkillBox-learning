@@ -83,13 +83,31 @@ namespace SkillBoxTask11
             EditBT.Enabled = false;
             EditGroup.Enabled = false;
             UserChoosing.Enabled = true;
+            ClientsListBox.Enabled = true;
+            CreateClientGroup.Enabled = currentUser.Access;
 
-            Client client = new Client(
-                SurTB2.Text, NameTB2.Text, PatrTB2.Text,
-                PhoneTB2.Text,
-                PassSTB2.Text, PassNTB2.Text);
+            Client client;
+            if (currentUser.Access)
+            {
+                client = new Client(
+                                    SurTB2.Text, NameTB2.Text, PatrTB2.Text,
+                                    PhoneTB2.Text,
+                                    PassSTB2.Text, PassNTB2.Text);
+            }
+            else
+            {
+                client = new Client(
+                                     SurTB2.Text, NameTB2.Text, PatrTB2.Text,
+                                     PhoneTB2.Text,
+                                     clients[ClientsListBox.SelectedIndex].passportSeries, clients[ClientsListBox.SelectedIndex].passportNumber);
+            }
+
+            ClientsListBox.Items.Remove(ClientsListBox.SelectedIndex);
             ClientsListBox.Items.Add(client.FullName);
+            clients.Remove(clients[ClientsListBox.SelectedIndex]);
             clients.Add(client);
+            RefreshList();
+            ResetInfo();
         }
         private void SaveBT_Click(object sender, EventArgs e)
         {
@@ -127,6 +145,8 @@ namespace SkillBoxTask11
         {
             EditBT.Enabled = true;
             EditGroup.Enabled = true;
+            ClientsListBox.Enabled = false;
+            CreateClientGroup.Enabled = false;
             if (ConsRB.Checked)
             {
                 SurTB2.Enabled = false;
@@ -145,48 +165,21 @@ namespace SkillBoxTask11
             }
             UserChoosing.Enabled = false;
 
-            var clientInfo = Parse(clients[ClientsListBox.SelectedIndex]);
-            if (clientInfo.Count == 4)
-            {
-                SurTB2.Text = String.Empty;
-                NameTB2.Text = clientInfo[0];
-                PatrTB2.Text = String.Empty;
-                PhoneTB2.Text = clientInfo[1];
-                PassSTB2.Text = clientInfo[2];
-                PassNTB2.Text = clientInfo[3];
-            }
-            if (clientInfo.Count == 5)
-            {
-                SurTB2.Text = clientInfo[0];
-                NameTB2.Text = clientInfo[1];
-                PatrTB2.Text = String.Empty;
-                PhoneTB2.Text = clientInfo[2];
-                PassSTB2.Text = clientInfo[3];
-                PassNTB2.Text = clientInfo[4];
-            }
-            if (clientInfo.Count == 6)
-            {
-                SurTB2.Text = clientInfo[0];
-                NameTB2.Text = clientInfo[1];
-                PatrTB2.Text = clientInfo[2];
-                PhoneTB2.Text = clientInfo[3];
-                PassSTB2.Text = clientInfo[4];
-                PassNTB2.Text = clientInfo[5];
-            }
+            Parse(clients[ClientsListBox.SelectedIndex]);
         }
-        private List<string> Parse(Client client)
+        private void ClientsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ClientsListBox.Items.Remove(ClientsListBox.SelectedIndex);
-            clients.Remove(client);
-            List<string> clientInfo = currentUser.GetInfo(client).Split('|').ToList<string>();
-            string[] fullName = clientInfo[0].Split(' ');
-            string phone = clientInfo[1];
-            string[] passport = clientInfo[2].Split(' ');
-            clientInfo.Clear();
-            clientInfo.AddRange(fullName.ToList<string>());
-            clientInfo.Add(phone);
-            clientInfo.AddRange(passport);
-            return clientInfo;
+            Parse(clients[ClientsListBox.SelectedIndex]);
+        }
+        private void Parse(Client client)
+        {
+            SurTB2.Text = client.surname;
+            NameTB2.Text = client.name;
+            PatrTB2.Text = client.patronymic;
+            PhoneTB2.Text = client.phone;
+            string passport = client.Passport(currentUser.Access);
+            PassSTB2.Text = passport.Split(' ')[0];
+            PassNTB2.Text = passport.Split(' ')[1];
         }
         private void ResetInfo()
         {
@@ -198,5 +191,6 @@ namespace SkillBoxTask11
             PassNTB2.Text = "";
         }
         #endregion
+
     }
 }

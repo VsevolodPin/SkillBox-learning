@@ -208,7 +208,6 @@ namespace Task3
             ChangesListTB.Text = client.changesList;
             ChangesTypeTB.Text = client.changesType;
             ChangerSignatureTB.Text = client.changerSignature;
-            //clients.Remove(client);
         }
         private void ResetInfo()
         {
