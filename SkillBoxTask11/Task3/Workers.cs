@@ -63,25 +63,5 @@ namespace Task3
             Client client = new Client(Surname, Name, Patronymic, Phone, PassS, PassN);
             return client;
         }
-        public bool UpdateData(Client client, string Surname, string Name, string Patronymic, string Phone, string PassS = "", string PassN = "")
-        {
-            // Делаем копию данных клиента
-            Client reserveData = client;
-
-            // Проверка корректности изменений
-            bool result;
-            result = client.UpdateFullName(Surname, Name, Patronymic);
-            result &= client.UpdatePhone(Phone);
-            result &= client.UpdatePassport(PassS, PassN);
-            if (!result)
-            {
-                client = reserveData;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
     }
 }

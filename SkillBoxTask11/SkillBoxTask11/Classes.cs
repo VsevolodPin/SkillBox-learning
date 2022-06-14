@@ -17,7 +17,7 @@ namespace SkillBoxTask11
         {
             if (String.IsNullOrEmpty(passportSeries) || String.IsNullOrEmpty(passportNumber))
             {
-                return String.Empty;
+                return String.Empty + " " + String.Empty;
             }
             else
             {
@@ -34,7 +34,7 @@ namespace SkillBoxTask11
 
         public string FullName
         {
-            get => $"{surname} {name} {patronymic}";
+            get => $"{surname} {name} {patronymic}".Trim();
         }
 
         public bool UpdatePhone(string newPhone)

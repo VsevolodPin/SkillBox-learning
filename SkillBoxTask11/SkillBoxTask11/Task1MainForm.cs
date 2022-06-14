@@ -50,33 +50,36 @@ namespace SkillBoxTask11
         #region Обработка кнопок
         private void AddClientBT_Click(object sender, EventArgs e)
         {
-            Client client;
-            if (String.IsNullOrEmpty(PatrTB1.Text))
+            if (!String.IsNullOrEmpty(NameTB1.Text) && !String.IsNullOrEmpty(PhoneTB1.Text))
             {
-                if (String.IsNullOrEmpty(SurTB1.Text))
+                Client client;
+                if (String.IsNullOrEmpty(PatrTB1.Text))
                 {
-                    client = new Client(
-                        NameTB1.Text,
-                        PhoneTB1.Text,
-                        PassSTB1.Text, PassNTB1.Text);
+                    if (String.IsNullOrEmpty(SurTB1.Text))
+                    {
+                        client = new Client(
+                            NameTB1.Text,
+                            PhoneTB1.Text,
+                            PassSTB1.Text, PassNTB1.Text);
+                    }
+                    else
+                    {
+                        client = new Client(
+                            SurTB1.Text, NameTB1.Text,
+                            PhoneTB1.Text,
+                            PassSTB1.Text, PassNTB1.Text);
+                    }
                 }
                 else
                 {
                     client = new Client(
-                        SurTB1.Text, NameTB1.Text,
+                        SurTB1.Text, NameTB1.Text, PatrTB1.Text,
                         PhoneTB1.Text,
                         PassSTB1.Text, PassNTB1.Text);
                 }
+                clients.Add(client);
+                ClientsListBox.Items.Add(client.FullName);
             }
-            else
-            {
-                client = new Client(
-                    SurTB1.Text, NameTB1.Text, PatrTB1.Text,
-                    PhoneTB1.Text,
-                    PassSTB1.Text, PassNTB1.Text);
-            }
-            clients.Add(client);
-            ClientsListBox.Items.Add(client.FullName);
         }
         private void EditBT_Click(object sender, EventArgs e)
         {
@@ -169,7 +172,14 @@ namespace SkillBoxTask11
         }
         private void ClientsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Parse(clients[ClientsListBox.SelectedIndex]);
+            try
+            {
+                Parse(clients[ClientsListBox.SelectedIndex]);
+            }
+            catch
+            {
+                // nothing;
+            }
         }
         private void Parse(Client client)
         {

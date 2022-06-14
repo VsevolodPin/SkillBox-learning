@@ -49,66 +49,73 @@ namespace Task3
         #region Обработка кнопок
         private void AddClientBT_Click(object sender, EventArgs e)
         {
-            Client client;
-            if (String.IsNullOrEmpty(PatrTB1.Text))
+            if (!String.IsNullOrEmpty(NameTB1.Text) && !String.IsNullOrEmpty(PhoneTB1.Text))
             {
-                if (String.IsNullOrEmpty(SurTB1.Text))
+                Client client;
+                if (String.IsNullOrEmpty(PatrTB1.Text))
                 {
-                    client = new Client(
-                        NameTB1.Text,
-                        PhoneTB1.Text,
-                        PassSTB1.Text, PassNTB1.Text);
+                    if (String.IsNullOrEmpty(SurTB1.Text))
+                    {
+                        client = new Client(
+                            NameTB1.Text,
+                            PhoneTB1.Text,
+                            PassSTB1.Text, PassNTB1.Text);
+                    }
+                    else
+                    {
+                        client = new Client(
+                            SurTB1.Text, NameTB1.Text,
+                            PhoneTB1.Text,
+                            PassSTB1.Text, PassNTB1.Text);
+                    }
                 }
                 else
                 {
                     client = new Client(
-                        SurTB1.Text, NameTB1.Text,
+                        SurTB1.Text, NameTB1.Text, PatrTB1.Text,
                         PhoneTB1.Text,
                         PassSTB1.Text, PassNTB1.Text);
                 }
+                clients.Add(client);
+                ClientsListBox.Items.Add(client.FullName);
             }
-            else
-            {
-                client = new Client(
-                    SurTB1.Text, NameTB1.Text, PatrTB1.Text,
-                    PhoneTB1.Text,
-                    PassSTB1.Text, PassNTB1.Text);
-            }
-            clients.Add(client);
-            ClientsListBox.Items.Add(client.FullName);
         }
         private void EditBT_Click(object sender, EventArgs e)
         {
-            EditBT.Enabled = false;
-            EditGroup.Enabled = false;
-            UserChoosing.Enabled = true;
-            ClientsListBox.Enabled = true;
-            CreateClientGroup.Enabled = currentUser.Access;
+            if (!String.IsNullOrEmpty(NameTB2.Text) && !String.IsNullOrEmpty(PhoneTB2.Text))
+            {
+                EditBT.Enabled = false;
+                EditGroup.Enabled = false;
+                UserChoosing.Enabled = true;
+                ClientsListBox.Enabled = true;
+                CreateClientGroup.Enabled = currentUser.Access;
 
-            Client client;
-            if (currentUser.Access)
-            {
-                client = manager.UpdateClient(
-                   clients[ClientsListBox.SelectedIndex],
-                   new Client(
-                   SurTB2.Text, NameTB2.Text, PatrTB2.Text,
-                   PhoneTB2.Text,
-                   PassSTB2.Text, PassNTB2.Text));
+                Client client;
+
+                if (currentUser.Access)
+                {
+                    client = manager.UpdateClient(
+                       clients[ClientsListBox.SelectedIndex],
+                       new Client(
+                       SurTB2.Text, NameTB2.Text, PatrTB2.Text,
+                       PhoneTB2.Text,
+                       PassSTB2.Text, PassNTB2.Text));
+                }
+                else
+                {
+                    client = consultant.UpdateClient(
+                        clients[ClientsListBox.SelectedIndex],
+                        new Client(
+                        SurTB2.Text, NameTB2.Text, PatrTB2.Text,
+                        PhoneTB2.Text,
+                        clients[ClientsListBox.SelectedIndex].passportSeries, clients[ClientsListBox.SelectedIndex].passportNumber));
+                }
+                ClientsListBox.Items.Remove(ClientsListBox.SelectedIndex);
+                ClientsListBox.Items.Add(client.FullName);
+                clients.Remove(clients[ClientsListBox.SelectedIndex]);
+                clients.Add(client);
+                RefreshList();
             }
-            else
-            {
-                client = consultant.UpdateClient(
-                    clients[ClientsListBox.SelectedIndex],
-                    new Client(
-                    SurTB2.Text, NameTB2.Text, PatrTB2.Text,
-                    PhoneTB2.Text,
-                    clients[ClientsListBox.SelectedIndex].passportSeries, clients[ClientsListBox.SelectedIndex].passportNumber));
-            }
-            ClientsListBox.Items.Remove(ClientsListBox.SelectedIndex);
-            ClientsListBox.Items.Add(client.FullName);
-            clients.Remove(clients[ClientsListBox.SelectedIndex]);
-            clients.Add(client);
-            RefreshList();
         }
         private void SaveBT_Click(object sender, EventArgs e)
         {
@@ -193,7 +200,14 @@ namespace Task3
         }
         private void ClientsListBox_SelectedValueChanged(object sender, EventArgs e)
         {
-            Parse(clients[ClientsListBox.SelectedIndex]);
+            try
+            {
+                Parse(clients[ClientsListBox.SelectedIndex]);
+            }
+            catch
+            {
+                // nothing;
+            }
         }
         private void Parse(Client client)
         {
