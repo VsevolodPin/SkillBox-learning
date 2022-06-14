@@ -104,6 +104,7 @@ namespace SkillBoxTask11
         #region Обработка событий
         private void ConsRB_CheckedChanged(object sender, EventArgs e)
         {
+            ResetInfo();
             RefreshList();
             if (ConsRB.Checked)
             {
@@ -173,7 +174,6 @@ namespace SkillBoxTask11
                 PassNTB2.Text = clientInfo[5];
             }
         }
-
         private List<string> Parse(Client client)
         {
             ClientsListBox.Items.Remove(ClientsListBox.SelectedIndex);
@@ -187,6 +187,15 @@ namespace SkillBoxTask11
             clientInfo.Add(phone);
             clientInfo.AddRange(passport);
             return clientInfo;
+        }
+        private void ResetInfo()
+        {
+            SurTB2.Text = "";
+            NameTB2.Text = "";
+            PatrTB2.Text = "";
+            PhoneTB2.Text = "";
+            PassSTB2.Text = "";
+            PassNTB2.Text = "";
         }
         #endregion
     }

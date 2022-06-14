@@ -123,6 +123,7 @@ namespace Task3
         #region Обработка событий
         private void ConsRB_CheckedChanged(object sender, EventArgs e)
         {
+            ResetInfo();
             RefreshList();
             if (ConsRB.Checked)
             {
@@ -208,6 +209,19 @@ namespace Task3
             ChangesTypeTB.Text = client.changesType;
             ChangerSignatureTB.Text = client.changerSignature;
             //clients.Remove(client);
+        }
+        private void ResetInfo()
+        {
+            SurTB2.Text = "";
+            NameTB2.Text = "";
+            PatrTB2.Text = "";
+            PhoneTB2.Text = "";
+            PassSTB2.Text = "";
+            PassNTB2.Text = "";
+            TimeChangesTB.Text = "";
+            ChangesListTB.Text = "";
+            ChangesTypeTB.Text = "";
+            ChangerSignatureTB.Text = "";
         }
         private void RefreshList()
         {
