@@ -68,10 +68,13 @@
             this.EditBT = new System.Windows.Forms.Button();
             this.UserChoosing = new System.Windows.Forms.GroupBox();
             this.SaveBT = new System.Windows.Forms.Button();
+            this.ClientChangeLogGroup = new System.Windows.Forms.GroupBox();
+            this.ClientChangeLogListBox = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.CreateClientGroup.SuspendLayout();
             this.EditGroup.SuspendLayout();
             this.UserChoosing.SuspendLayout();
+            this.ClientChangeLogGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // AddClientBT
@@ -90,7 +93,7 @@
             this.ClientsListBox.ItemHeight = 15;
             this.ClientsListBox.Location = new System.Drawing.Point(6, 22);
             this.ClientsListBox.Name = "ClientsListBox";
-            this.ClientsListBox.Size = new System.Drawing.Size(294, 484);
+            this.ClientsListBox.Size = new System.Drawing.Size(294, 274);
             this.ClientsListBox.TabIndex = 0;
             this.ClientsListBox.SelectedValueChanged += new System.EventHandler(this.ClientsListBox_SelectedValueChanged);
             this.ClientsListBox.DoubleClick += new System.EventHandler(this.ClientsListBox_DoubleClick);
@@ -101,7 +104,7 @@
             this.groupBox1.Controls.Add(this.ClientsListBox);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(308, 518);
+            this.groupBox1.Size = new System.Drawing.Size(308, 312);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Список клиентов";
@@ -457,11 +460,32 @@
             this.SaveBT.UseVisualStyleBackColor = true;
             this.SaveBT.Click += new System.EventHandler(this.SaveBT_Click);
             // 
+            // ClientChangeLogGroup
+            // 
+            this.ClientChangeLogGroup.Controls.Add(this.ClientChangeLogListBox);
+            this.ClientChangeLogGroup.Location = new System.Drawing.Point(12, 330);
+            this.ClientChangeLogGroup.Name = "ClientChangeLogGroup";
+            this.ClientChangeLogGroup.Size = new System.Drawing.Size(308, 187);
+            this.ClientChangeLogGroup.TabIndex = 34;
+            this.ClientChangeLogGroup.TabStop = false;
+            this.ClientChangeLogGroup.Text = "Список изменений клиента";
+            // 
+            // ClientChangeLogListBox
+            // 
+            this.ClientChangeLogListBox.FormattingEnabled = true;
+            this.ClientChangeLogListBox.ItemHeight = 15;
+            this.ClientChangeLogListBox.Location = new System.Drawing.Point(6, 22);
+            this.ClientChangeLogListBox.Name = "ClientChangeLogListBox";
+            this.ClientChangeLogListBox.Size = new System.Drawing.Size(294, 154);
+            this.ClientChangeLogListBox.TabIndex = 0;
+            this.ClientChangeLogListBox.SelectedIndexChanged += new System.EventHandler(this.ClientChangeLogListBox_SelectedIndexChanged);
+            // 
             // Task3MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(611, 589);
+            this.Controls.Add(this.ClientChangeLogGroup);
             this.Controls.Add(this.SaveBT);
             this.Controls.Add(this.UserChoosing);
             this.Controls.Add(this.EditBT);
@@ -479,6 +503,7 @@
             this.EditGroup.PerformLayout();
             this.UserChoosing.ResumeLayout(false);
             this.UserChoosing.PerformLayout();
+            this.ClientChangeLogGroup.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -525,5 +550,7 @@
         private System.Windows.Forms.TextBox ChangesTypeTB;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox TimeChangesTB;
+        private System.Windows.Forms.GroupBox ClientChangeLogGroup;
+        private System.Windows.Forms.ListBox ClientChangeLogListBox;
     }
 }

@@ -22,6 +22,7 @@ namespace Task3
 
             manager = new Manager();
             consultant = new Consultant();
+            clients = new List<Client>();
 
             if (File.Exists("Clients DataBase.DB"))
             {
@@ -37,7 +38,7 @@ namespace Task3
         }
 
         #region Поля главноего окна
-        List<Client> clients = new List<Client>();
+        List<Client> clients;
         Manager manager;
         Consultant consultant;
         IWorker currentUser
@@ -77,6 +78,7 @@ namespace Task3
                         PassSTB1.Text, PassNTB1.Text);
                 }
                 clients.Add(client);
+                client.Logs.Add(new Log(DateTime.Now.ToLocalTime().ToLongDateString(), "Не было изменений", "Создана", "Manager"));
                 ClientsListBox.Items.Add(client.FullName);
             }
         }
@@ -200,15 +202,32 @@ namespace Task3
         }
         private void ClientsListBox_SelectedValueChanged(object sender, EventArgs e)
         {
+            ClientChangeLogListBox.Items.Clear();
             try
             {
                 Parse(clients[ClientsListBox.SelectedIndex]);
+                for (int i = 0; i < clients[ClientsListBox.SelectedIndex].Logs.Count; i++)
+                {
+                    ClientChangeLogListBox.Items.Add($"Заметка {i + 1}");
+                }
             }
             catch
             {
                 // nothing;
             }
         }
+        private void ClientChangeLogListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Parse(clients[ClientsListBox.SelectedIndex].Logs[ClientChangeLogListBox.SelectedIndex]);
+            }
+            catch
+            {
+                // nothing;
+            }
+        }
+
         private void Parse(Client client)
         {
             SurTB2.Text = client.surname;
@@ -218,10 +237,18 @@ namespace Task3
             string passport = client.Passport(currentUser.Access);
             PassSTB2.Text = passport.Split(' ')[0];
             PassNTB2.Text = passport.Split(' ')[1];
-            TimeChangesTB.Text = client.timeChanges;
-            ChangesListTB.Text = client.changesList;
-            ChangesTypeTB.Text = client.changesType;
-            ChangerSignatureTB.Text = client.changerSignature;
+            Log notice = client.LastLog;
+            TimeChangesTB.Text = notice.timeChanges;
+            ChangesListTB.Text = notice.changesList;
+            ChangesTypeTB.Text = notice.changesType;
+            ChangerSignatureTB.Text = notice.changerSignature;
+        }
+        private void Parse(Log notice)
+        {
+            TimeChangesTB.Text = notice.timeChanges;
+            ChangesListTB.Text = notice.changesList;
+            ChangesTypeTB.Text = notice.changesType;
+            ChangerSignatureTB.Text = notice.changerSignature;
         }
         private void ResetInfo()
         {
@@ -239,8 +266,11 @@ namespace Task3
         private void RefreshList()
         {
             ClientsListBox.Items.Clear();
+            ClientChangeLogListBox.Items.Clear();
             foreach (Client item in clients)
+            {
                 ClientsListBox.Items.Add(item.FullName);
+            }
         }
         #endregion
     }
