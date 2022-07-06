@@ -30,8 +30,6 @@ namespace SkillBoxTask12
         }
         List<Client> clientsList = new List<Client>();
 
-        List<TextBox> addClientGroup, changeClientGroup;
-
         #endregion
 
         public MainWindow()
@@ -40,6 +38,7 @@ namespace SkillBoxTask12
 
             #region Инициализация 
 
+            // Начальное окно с выбором оператора (потом можно поменять)
             Authorization authorizationWindow = new Authorization();
             authorizationWindow.ShowDialog();
             if (authorizationWindow.currentWorker.Access)
@@ -52,9 +51,7 @@ namespace SkillBoxTask12
             }
             AddClientBT.IsEnabled = false;
 
-            List<TextBox> addClientGroup = new List<TextBox> { FamTB1, NameTB1, PatrTB1, PhoneTB1, PassSTB1, PassNTB1 };
-            List<TextBox> changeClientGroup = new List<TextBox> { FamTB2, NameTB2, PatrTB2, PhoneTB2, PassSTB2, PassNTB2 };
-
+            // Загрузка базы данных
             if (File.Exists("Clients DataBase.DB"))
             {
                 using (StreamReader sr = new StreamReader("Clients DataBase.DB"))
@@ -155,6 +152,8 @@ namespace SkillBoxTask12
                 ChangesListTB.Document = flowDocument;
             }
         }
+
+        // Обновление listBox`а набором элементов List<string> data (запись имен клиентов/логов изменений записи в соответсвтвующие ListBox`ы)
         private void RefreshList(ListBox listBox, List<string> data = null)
         {
             listBox.Items.Clear();
@@ -222,6 +221,7 @@ namespace SkillBoxTask12
 
         #region Работа с текстовыми полями
 
+        // Запрет/разрешение на использование набора элементов типа TextBox
         void EnableElements(List<TextBox> elements, bool enable = false)
         {
             foreach (var elem in elements)
@@ -229,6 +229,8 @@ namespace SkillBoxTask12
                 elem.IsEnabled = enable;
             }
         }
+
+        // Заполнение массива TextBox`ов массивом строк
         void PasteText(List<TextBox> elements, List<string> texts)
         {
             if (elements.Count > texts.Count) return;
@@ -237,6 +239,8 @@ namespace SkillBoxTask12
                 elements[i].Text = texts[i];
             }
         }
+
+        // Получение массива строк из массива TextBox`ов
         List<string> GetText(List<TextBox> elements)
         {
             List<string> result = new List<string>();
@@ -246,6 +250,8 @@ namespace SkillBoxTask12
             }
             return result;
         }
+
+        // Проверка на заполненность всех полей при создании новой записи
         private void AddClientCheckValue(object sender, TextChangedEventArgs e)
         {
             if (String.IsNullOrEmpty(FamTB1.Text) ||
@@ -267,6 +273,7 @@ namespace SkillBoxTask12
 
         #region Работа с List`ами
 
+        // Получение массива имен для отображения в ListBox
         private List<string> GetFullNames(List<Client> clientsList)
         {
             List<string> fullNames = new List<string>();
@@ -276,6 +283,8 @@ namespace SkillBoxTask12
             }
             return fullNames;
         }
+        
+        // Сортировка по алфавиту/наоборот
         private void SortList(object sender, MouseButtonEventArgs e)
         {
             if (ClientListHeader.Text.Split(' ')[2] == "А-Я")

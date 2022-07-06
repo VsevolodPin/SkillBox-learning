@@ -93,12 +93,6 @@ namespace SkillBoxTask12
         /// <summary>
         /// Полный конструктор
         /// </summary>
-        /// <param name="Surname"></param>
-        /// <param name="Name"></param>
-        /// <param name="Patronymic"></param>
-        /// <param name="Phone"></param>
-        /// <param name="PassS"></param>
-        /// <param name="PassN"></param>
         public Client(string Surname, string Name, string Patronymic, string Phone, string PassS = "", string PassN = "")
         {
             surname = Surname;
@@ -114,11 +108,6 @@ namespace SkillBoxTask12
         /// <summary>
         /// Конструктор без отчества
         /// </summary>
-        /// <param name="Surname"></param>
-        /// <param name="Name"></param>
-        /// <param name="Phone"></param>
-        /// <param name="PassS"></param>
-        /// <param name="PassN"></param>
         public Client(string Surname, string Name, string Phone, string PassS = "", string PassN = "")
         {
             surname = Surname;
@@ -133,10 +122,6 @@ namespace SkillBoxTask12
         /// <summary>
         /// Конструктор без фамилии и отчества
         /// </summary>
-        /// <param name="Name"></param>
-        /// <param name="Phone"></param>
-        /// <param name="PassS"></param>
-        /// <param name="PassN"></param>
         public Client(string Name, string Phone, string PassS = "", string PassN = "")
         {
             name = Name;
@@ -150,15 +135,15 @@ namespace SkillBoxTask12
         /// <summary>
         /// Конструктор через массив данных
         /// </summary>
-        /// <param name="fields"></param>
-        public Client(List<string> fields)
+        /// <param name="data"> Фамилия, имя, отчество, телефон, серия паспорта, номер паспорта </param>
+        public Client(List<string> data)
         {
-            surname = fields[0];
-            name = fields[1];
-            patronymic = fields[2];
-            phone = fields[3];
-            passportSeries = fields[4];
-            passportNumber = fields[5];
+            surname = data[0];
+            name = data[1];
+            patronymic = data[2];
+            phone = data[3];
+            passportSeries = data[4];
+            passportNumber = data[5];
 
             Logs = new List<Log>();
         }
