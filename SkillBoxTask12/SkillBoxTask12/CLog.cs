@@ -20,15 +20,15 @@ namespace SkillBoxTask12
 
         public Log()
         {
-            timeChanges = "";
+            timeChanges = DateTime.Now.ToLocalTime().ToLongDateString();
             changesList = "";
             changesType = "";
             changerSignature = "";
         }
 
-        public Log(string TimeChanges, string ChangesList, string ChangesType, string ChangerSignature)
+        public Log(string ChangesList, string ChangesType, string ChangerSignature)
         {
-            timeChanges = TimeChanges;
+            timeChanges = DateTime.Now.ToLocalTime().ToLongDateString();
             changesList = ChangesList;
             changesType = ChangesType;
             changerSignature = ChangerSignature;

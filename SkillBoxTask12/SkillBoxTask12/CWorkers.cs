@@ -9,8 +9,7 @@ namespace SkillBoxTask12
     public interface IWorker
     {
         public bool Access { get; }
-        public string GetInfo(Client client);
-        public string Identificate { get; }
+        public string Signature { get; }
         public Client UpdateClient(Client oldClient, Client newClient);
     }
 
@@ -28,22 +27,9 @@ namespace SkillBoxTask12
             get => access;
         }
 
-        public string Identificate
+        public string Signature
         {
             get => access == true ? "Manager" : "Consultant";
-        }
-
-        public string GetInfo(Client client)
-        {
-            string passport = client.Passport(access);
-            string clientFIO = client.FullName;
-            string phoneNumber = client.phone;
-            return $"{clientFIO}|{phoneNumber}|{passport}";
-        }
-
-        public bool UpdatePhone(Client client, string Phone)
-        {
-            return client.UpdatePhone(Phone);
         }
 
         public Client UpdateClient(Client oldClient, Client newClient)
@@ -57,11 +43,6 @@ namespace SkillBoxTask12
         public Manager()
         {
             access = true;
-        }
-        public Client CreateClient(string Surname, string Name, string Patronymic, string Phone, string PassS = "", string PassN = "")
-        {
-            Client client = new Client(Surname, Name, Patronymic, Phone, PassS, PassN);
-            return client;
         }
     }
 }

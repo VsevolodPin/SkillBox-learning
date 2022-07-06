@@ -73,7 +73,6 @@ namespace SkillBoxTask12
             #endregion
         }
 
-
         #region Обработка радиокнопок
 
         private void ConsChecked(object sender, RoutedEventArgs e)
@@ -94,7 +93,6 @@ namespace SkillBoxTask12
                 PasteText(new List<TextBox> { FamTB2, NameTB2, PatrTB2, PhoneTB2, PassSTB2, PassNTB2 }, clientInfo);
             }
         }
-
         private void ManagerChecked(object sender, RoutedEventArgs e)
         {
             EnableElements(new List<TextBox> {
@@ -116,7 +114,7 @@ namespace SkillBoxTask12
 
         #endregion
 
-        #region Работа со списками
+        #region Работа с ListBox`ами
 
         private void SelectNewClient(object sender, SelectionChangedEventArgs e)
         {
@@ -136,7 +134,6 @@ namespace SkillBoxTask12
             }
             RefreshList(LogsLB, client.GetLogsList);
         }
-
         private void SelectNewChangelog(object sender, SelectionChangedEventArgs e)
         {
             FlowDocument flowDocument = new FlowDocument();
@@ -158,17 +155,6 @@ namespace SkillBoxTask12
                 ChangesListTB.Document = flowDocument;
             }
         }
-
-        private List<string> GetFullNames(List<Client> clientsList)
-        {
-            List<string> fullNames = new List<string>();
-            foreach (Client client in clientsList)
-            {
-                fullNames.Add(client.FullName);
-            }
-            return fullNames;
-        }
-
         private void RefreshList(ListBox listBox, List<string> data = null)
         {
             listBox.Items.Clear();
@@ -211,20 +197,18 @@ namespace SkillBoxTask12
                 RefreshList(ClientsLB, GetFullNames(clientsList));
             }
         }
-
         private void AddClientClick(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrEmpty(NameTB1.Text) && !String.IsNullOrEmpty(PhoneTB1.Text))
             {
                 Client client = new Client(GetText(new List<TextBox> { FamTB1, NameTB1, PatrTB1, PhoneTB1, PassSTB1, PassNTB1 }));
-                client.Logs.Add(new Log(DateTime.Now.ToLocalTime().ToLongDateString(), "Не было изменений", "Создана", "Manager"));
+                client.Logs.Add(new Log("Не было изменений", "Создана", "Manager"));
                 clientsList.Add(client);
                 RefreshList(ClientsLB, GetFullNames(clientsList));
             }
 
             PasteText(new List<TextBox> { FamTB1, NameTB1, PatrTB1, PhoneTB1, PassSTB1, PassNTB1 }, new List<string> { "", "", "", "", "", "" });
         }
-
         private void SaveChangesClick(object sender, RoutedEventArgs e)
         {
             using (StreamWriter sw = new StreamWriter("Clients DataBase.DB"))
@@ -245,7 +229,6 @@ namespace SkillBoxTask12
                 elem.IsEnabled = enable;
             }
         }
-
         void PasteText(List<TextBox> elements, List<string> texts)
         {
             if (elements.Count > texts.Count) return;
@@ -254,7 +237,6 @@ namespace SkillBoxTask12
                 elements[i].Text = texts[i];
             }
         }
-
         List<string> GetText(List<TextBox> elements)
         {
             List<string> result = new List<string>();
@@ -264,24 +246,6 @@ namespace SkillBoxTask12
             }
             return result;
         }
-
-        private void SortList(object sender, MouseButtonEventArgs e)
-        {
-            if (ClientListHeader.Text.Split(' ')[2] == "А-Я")
-            {
-                ClientListHeader.Text = "Список клиентов Я-А";
-                clientsList.Sort();
-                clientsList.Reverse();
-                RefreshList(ClientsLB, GetFullNames(clientsList));
-            }
-            else
-            {
-                ClientListHeader.Text = "Список клиентов А-Я";
-                clientsList.Sort();
-                RefreshList(ClientsLB, GetFullNames(clientsList));
-            }
-        }
-
         private void AddClientCheckValue(object sender, TextChangedEventArgs e)
         {
             if (String.IsNullOrEmpty(FamTB1.Text) ||
@@ -301,5 +265,34 @@ namespace SkillBoxTask12
 
         #endregion
 
+        #region Работа с List`ами
+
+        private List<string> GetFullNames(List<Client> clientsList)
+        {
+            List<string> fullNames = new List<string>();
+            foreach (Client client in clientsList)
+            {
+                fullNames.Add(client.FullName);
+            }
+            return fullNames;
+        }
+        private void SortList(object sender, MouseButtonEventArgs e)
+        {
+            if (ClientListHeader.Text.Split(' ')[2] == "А-Я")
+            {
+                ClientListHeader.Text = "Список клиентов Я-А";
+                clientsList.Sort();
+                clientsList.Reverse();
+                RefreshList(ClientsLB, GetFullNames(clientsList));
+            }
+            else
+            {
+                ClientListHeader.Text = "Список клиентов А-Я";
+                clientsList.Sort();
+                RefreshList(ClientsLB, GetFullNames(clientsList));
+            }
+        }
+
+        #endregion
     }
 }

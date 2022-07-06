@@ -8,12 +8,16 @@ namespace SkillBoxTask12
 {
     public class Client : IComparable, IComparable<Client>
     {
+        #region Поля класса
         public string
             surname = " ", name, patronymic = " ",
             phone,
             passportSeries, passportNumber;
 
         public List<Log> Logs = new List<Log>();
+        #endregion
+
+        #region Получение данных
         public List<string> GetLogsList
         {
             get
@@ -26,23 +30,12 @@ namespace SkillBoxTask12
                 return LogsList;
             }
         }
-
-
         public string FullName
         {
             get => $"{(String.IsNullOrEmpty(surname) == true ? ' ' : surname.Trim())} " +
                 $"{name.Trim()} " +
                 $"{(String.IsNullOrEmpty(patronymic) == true ? String.Empty : patronymic.Trim())}";
         }
-
-        public Log LastLog
-        {
-            get
-            {
-                return Logs.Count == 0 ? new Log() : Logs.Last();
-            }
-        }
-
         public string Passport(bool access = false)
         {
             if (String.IsNullOrEmpty(passportSeries) || String.IsNullOrEmpty(passportNumber))
@@ -61,53 +54,7 @@ namespace SkillBoxTask12
                 }
             }
         }
-
-        public bool UpdatePhone(string newPhone)
-        {
-            if (String.IsNullOrEmpty(newPhone))
-            {
-                return false;
-            }
-            else
-            {
-                phone = newPhone;
-                return true;
-            }
-        }
-
-        public Client UpdateClient(Client newClient, IWorker Changer)
-        {
-            string localChangesList = "";
-            if (FullName != newClient.FullName)
-            {
-                localChangesList += $"Изменено полное имя\n";
-            }
-            if (phone != newClient.phone)
-            {
-                localChangesList += $"Изменен номер телефона\n";
-            }
-            if (passportSeries + passportNumber != newClient.passportSeries + passportNumber)
-            {
-                localChangesList += $"Изменен паспорт";
-            }
-            if (String.IsNullOrEmpty(localChangesList))
-            {
-                return this;
-            }
-            else
-            {
-                surname = newClient.surname;
-                name = newClient.name;
-                patronymic = newClient.patronymic;
-                phone = newClient.phone;
-                passportSeries = newClient.passportSeries;
-                passportNumber = newClient.passportNumber;
-
-                var notice = new Log(DateTime.Now.ToLocalTime().ToLongDateString(), localChangesList, "Изменен", Changer.Identificate);
-                Logs.Add(notice);
-                return this;
-            }
-        }
+        #endregion
 
         #region Реализация IComparable
 
@@ -216,5 +163,39 @@ namespace SkillBoxTask12
             Logs = new List<Log>();
         }
         #endregion
+
+        public Client UpdateClient(Client newClient, IWorker Changer)
+        {
+            string localChangesList = "";
+            if (FullName != newClient.FullName)
+            {
+                localChangesList += $"Изменено полное имя\n";
+            }
+            if (phone != newClient.phone)
+            {
+                localChangesList += $"Изменен номер телефона\n";
+            }
+            if (passportSeries + passportNumber != newClient.passportSeries + passportNumber)
+            {
+                localChangesList += $"Изменен паспорт";
+            }
+            if (String.IsNullOrEmpty(localChangesList))
+            {
+                return this;
+            }
+            else
+            {
+                surname = newClient.surname;
+                name = newClient.name;
+                patronymic = newClient.patronymic;
+                phone = newClient.phone;
+                passportSeries = newClient.passportSeries;
+                passportNumber = newClient.passportNumber;
+
+                var notice = new Log(localChangesList, "Изменен", Changer.Signature);
+                Logs.Add(notice);
+                return this;
+            }
+        }
     }
 }

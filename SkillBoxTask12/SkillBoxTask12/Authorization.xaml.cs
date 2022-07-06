@@ -19,7 +19,7 @@ namespace SkillBoxTask12
     /// </summary>
     public partial class Authorization : Window
     {
-        public IWorker currentWorker = new Consultant();
+        public IWorker currentWorker = new Consultant(); // базовая инициализация на случай закрытия окна без фактического выбора
 
         public Authorization()
         {
