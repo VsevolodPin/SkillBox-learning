@@ -15,7 +15,7 @@ namespace SkillBoxTask12
 
     public class Consultant : IWorker
     {
-        protected bool access;
+        protected bool access; // есть ли доступ к паспортным данным
 
         public Consultant()
         {
