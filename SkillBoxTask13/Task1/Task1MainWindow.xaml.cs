@@ -181,6 +181,5 @@ namespace Task1
                 Client2CB.Items.Add(client.FullName);
             }
         }
-
     }
 }

@@ -1,19 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Task2
 {
     internal class Account : IAccount
     {
         public double Balance;
-        public void ReceiveMoney<T>(T amount)
+        public string Type { get; set; }
+        public Account()
+        {
+            Balance = 0;
+        }
+        public void SetBalance<AmountType>(AmountType amount)
+        {
+            Balance = Convert.ToDouble(amount);
+        }
+        public void ReceiveMoney<AmountType>(AmountType amount)
         {
             Balance += Convert.ToDouble(amount);
         }
-        public void SendMoney<T>(IAccount receiver, T amount)
+        public void SendMoney<AccountType, AmountType>(AccountType receiver, AmountType amount)
+            where AccountType : Account
         {
             try
             {
@@ -32,10 +38,12 @@ namespace Task2
         public DebitAccount()
         {
             Balance = 0;
+            Type = "Депозитный";
         }
         public DebitAccount(double startBalance)
         {
             Balance = startBalance;
+            Type = "Депозитный";
         }
     }
 
@@ -44,10 +52,12 @@ namespace Task2
         public CreditAccount()
         {
             Balance = 0;
+            Type = "Кредитный";
         }
         public CreditAccount(double startBalance)
         {
             Balance = startBalance;
+            Type = "Кредитный";
         }
     }
 }
