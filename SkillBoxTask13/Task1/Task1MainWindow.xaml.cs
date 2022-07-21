@@ -126,7 +126,24 @@ namespace Task1
         {
             try
             {
-                clientsList.RemoveAt(Client1CB.SelectedIndex);
+                int clientIdx = Client1CB.SelectedIndex;
+                int accIdx;
+                try
+                {
+                    accIdx = Client1AccCB.SelectedIndex;
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    accIdx = -1;
+                }
+
+                if (clientsList[clientIdx].CloseAccount(accIdx))
+                {
+                    if (clientsList[clientIdx].Accounts.Count == 0)
+                    {
+                        clientsList.RemoveAt(clientIdx);
+                    }
+                }
                 RefreshComboBoxes();
             }
             catch

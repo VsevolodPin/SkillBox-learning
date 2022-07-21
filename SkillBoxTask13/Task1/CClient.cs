@@ -39,7 +39,7 @@ namespace Task1
         {
             Accounts.Add(new Account(Convert.ToDouble(startBalance)));
         }
-        public void CloseAccount(int accountNumber = -1)
+        public bool CloseAccount(int accountNumber = -1)
         {
             if (Accounts.Count == 0) throw new Exception("У клиента нет ни одного действующего счета");
             else
@@ -52,7 +52,7 @@ namespace Task1
                     {
                         if (Accounts.Last().Balance < 0) throw new Exception("Нельзя закрыть счет с отрицательным балансом.");
                         if (Accounts.Last().Balance > 0) throw new Exception("Нельзя закрыть счет с ненулевым балансом. Возможна потеря средств.");
-                        if (Accounts.Last().Balance == 0) { Accounts.Clear(); return; }
+                        if (Accounts.Last().Balance == 0) { Accounts.Clear(); return true; }
                     }
                     // Типичный сценарий - удаление последнего счета с переносом средств на первый
                     else
@@ -60,7 +60,7 @@ namespace Task1
                         double removedAccountBalance = Accounts.Last().Balance;
                         Accounts.RemoveAt(Accounts.Count - 1);
                         Accounts[0].ReceiveMoney(removedAccountBalance);
-                        return;
+                        return true;
                     }
                 }
                 // Сценарий удаления произвольного счета
@@ -74,10 +74,11 @@ namespace Task1
                         double removedAccountBalance = Accounts[accountNumber].Balance;
                         Accounts.RemoveAt(accountNumber);
                         Accounts[0].ReceiveMoney(removedAccountBalance);
-                        return;
+                        return true;
                     }
                 }
             }
+            return false;
         }
     }
 }
