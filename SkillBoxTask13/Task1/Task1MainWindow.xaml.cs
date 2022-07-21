@@ -10,12 +10,12 @@ namespace Task1
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Task1MainWindow : Window
     {
         List<Client> clientsList;
         Random rand = new Random();
 
-        public MainWindow()
+        public Task1MainWindow()
         {
             InitializeComponent();
 
@@ -37,7 +37,11 @@ namespace Task1
         {
             try
             {
-                Balance1TB.Text = clientsList[Client1CB.SelectedIndex].Balance.ToString();
+                Client1AccCB.Items.Clear();
+                for (int i = 0; i < clientsList[Client1CB.SelectedIndex].Accounts.Count; i++)
+                {
+                    Client1AccCB.Items.Add($"Счет #{i + 1}");
+                }
             }
             catch
             {
@@ -48,7 +52,33 @@ namespace Task1
         {
             try
             {
-                Balance2TB.Text = clientsList[Client2CB.SelectedIndex].Balance.ToString();
+                Client2AccCB.Items.Clear();
+                for (int i = 0; i < clientsList[Client2CB.SelectedIndex].Accounts.Count; i++)
+                {
+                    Client2AccCB.Items.Add($"Счет #{i + 1}");
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        private void Client1AccCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Balance1TB.Text = clientsList[Client1CB.SelectedIndex].Accounts[Client1AccCB.SelectedIndex].Balance.ToString();
+            }
+            catch
+            {
+
+            }
+        }
+        private void Client2AccCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Balance2TB.Text = clientsList[Client2CB.SelectedIndex].Accounts[Client2AccCB.SelectedIndex].Balance.ToString();
             }
             catch
             {
@@ -64,15 +94,19 @@ namespace Task1
         #region Обработчики кнопок
         private void TransactionBT_Click(object sender, RoutedEventArgs e)
         {
-            var rnd = rand.Next(0, 3);
-            if (rnd == 0)
-                clientsList[Client1CB.SelectedIndex][0].SendMoney(clientsList[Client2CB.SelectedIndex][0], int.Parse(TakeOffTB.Text));
-            if (rnd == 1)
-                clientsList[Client1CB.SelectedIndex][0].SendMoney(clientsList[Client2CB.SelectedIndex][0], float.Parse(TakeOffTB.Text));
-            if (rnd == 2)
-                clientsList[Client1CB.SelectedIndex][0].SendMoney(clientsList[Client2CB.SelectedIndex][0], double.Parse(TakeOffTB.Text));
-            Balance1TB.Text = clientsList[Client1CB.SelectedIndex][0].Balance.ToString();
-            Balance2TB.Text = clientsList[Client2CB.SelectedIndex][0].Balance.ToString();
+            try
+            {
+                var rnd = rand.Next(0, 3);
+                if (rnd == 0)
+                    clientsList[Client1CB.SelectedIndex][Client1AccCB.SelectedIndex].SendMoney(clientsList[Client2CB.SelectedIndex][Client2AccCB.SelectedIndex], int.Parse(TakeOffTB.Text));
+                if (rnd == 1)
+                    clientsList[Client1CB.SelectedIndex][Client1AccCB.SelectedIndex].SendMoney(clientsList[Client2CB.SelectedIndex][Client2AccCB.SelectedIndex], float.Parse(TakeOffTB.Text));
+                if (rnd == 2)
+                    clientsList[Client1CB.SelectedIndex][Client1AccCB.SelectedIndex].SendMoney(clientsList[Client2CB.SelectedIndex][Client2AccCB.SelectedIndex], double.Parse(TakeOffTB.Text));
+                Balance1TB.Text = clientsList[Client1CB.SelectedIndex][Client1AccCB.SelectedIndex].Balance.ToString();
+                Balance2TB.Text = clientsList[Client2CB.SelectedIndex][Client2AccCB.SelectedIndex].Balance.ToString();
+            }
+            catch { }
         }
         private void CreateBT_Click(object sender, RoutedEventArgs e)
         {
@@ -100,6 +134,19 @@ namespace Task1
                 // do nothing...
             }
         }
+        private void OpenAccBT_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                clientsList[Client1CB.SelectedIndex].AddAccount(0);
+                RefreshComboBoxes();
+            }
+            catch
+            {
+                // do nothing...
+            }
+        }
+
         #endregion
 
         public void RefreshComboBoxes()
@@ -117,5 +164,6 @@ namespace Task1
                 Client2CB.Items.Add(client.FullName);
             }
         }
+
     }
 }
