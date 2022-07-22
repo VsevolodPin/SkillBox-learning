@@ -102,8 +102,7 @@ namespace Task2
         private void CreateBT_Click(object sender, RoutedEventArgs e)
         {
             Client client = new Client(FullNameTB.Text);
-            //IAccount<double> newAccount = new DebitAccount
-            client.AddAccount<DebitAccount>(double.Parse(StartBalanceTB.Text));
+            client.AddAccount(new DebitAccount(double.Parse(StartBalanceTB.Text)));
             clientsList.Add(client);
             RefreshComboBoxes();
         }

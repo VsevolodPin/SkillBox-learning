@@ -48,6 +48,12 @@ namespace Task2
             account.SetBalance(startBalance);
             Accounts.Add(account);
         }
+        public void AddAccount<AccountType>(AccountType newAccount)
+            where AccountType : Account
+        {
+            Accounts.Add(new Account());
+            Accounts[Accounts.Count-1] = newAccount;
+        }
         public bool CloseAccount(int accountNumber = -1)
         {
             if (Accounts.Count == 0) throw new Exception("У клиента нет ни одного действующего счета");
