@@ -85,12 +85,11 @@ namespace Task2
             {
                 if (DebitAccRB.IsChecked == true)
                 {
-                    clientsList[ClientForNewAcc.SelectedIndex].AddAccount<DebitAccount>(double.Parse(StartBalanceForNewAccTB.Text));
+                    clientsList[ClientForNewAcc.SelectedIndex].AddAccount(new DebitAccount(double.Parse(StartBalanceForNewAccTB.Text)));
                 }
                 else
                 {
-                    clientsList[ClientForNewAcc.SelectedIndex].AddAccount<CreditAccount>(double.Parse(StartBalanceForNewAccTB.Text));
-
+                    clientsList[ClientForNewAcc.SelectedIndex].AddAccount(new CreditAccount(double.Parse(StartBalanceForNewAccTB.Text)));
                 }
                 RefreshComboBoxes();
             }
