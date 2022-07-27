@@ -2,14 +2,56 @@
 
 namespace Task2
 {
-    internal class Account : IAccount<double>
+
+    internal class Account : MoneyHolder
     {
-        public double Balance { get; set; }
-        public string Type { get; set; }
         public Account()
         {
             Balance = 0;
         }
+        public Account(double startBalance)
+        {
+            Balance = startBalance;
+        }
+        public void SetBalance<AmountType>(AmountType amount)
+        {
+            Balance = Convert.ToDouble(amount);
+        }
+        public void ReceiveMoney<AmountType>(AmountType amount)
+        {
+            Balance += Convert.ToDouble(amount);
+            SetBalance(Balance);
+        }
+        public void SendMoney<AmountType>(Account receiver, AmountType amount)
+        {
+            try
+            {
+                Balance -= Convert.ToDouble(amount);
+                SetBalance(Balance);
+                receiver.ReceiveMoney(amount);
+            }
+            catch
+            {
+                throw new Exception("Что-то пошло не так, транзакция не завершена.");
+            }
+        }
+    }
+
+    internal class DebitAccount : IMoneyHolder<Account, Account>
+    {
+        public string Type { get; }
+        public double Balance { get; set; }
+        public DebitAccount()
+        {
+            Balance = 0;
+            Type = "Депозитный";
+        }
+        public DebitAccount(double startBalance)
+        {
+            Balance = startBalance;
+            Type = "Депозитный";
+        }
+        Account IMoneyHolder<Account, Account>.GetAccount => new Account(Balance);
         public void SetBalance<AmountType>(AmountType amount)
         {
             Balance = Convert.ToDouble(amount);
@@ -19,7 +61,7 @@ namespace Task2
             Balance += Convert.ToDouble(amount);
         }
         public void SendMoney<AccountType, AmountType>(AccountType receiver, AmountType amount)
-            where AccountType : Account
+                    where AccountType : IMoneyHolder<Account, Account>
         {
             try
             {
@@ -31,24 +73,13 @@ namespace Task2
                 throw new Exception("Что-то пошло не так, транзакция не завершена.");
             }
         }
+
     }
 
-    internal class DebitAccount : Account
+    internal class CreditAccount : IMoneyHolder<Account, Account>
     {
-        public DebitAccount()
-        {
-            Balance = 0;
-            Type = "Депозитный";
-        }
-        public DebitAccount(double startBalance)
-        {
-            Balance = startBalance;
-            Type = "Депозитный";
-        }
-    }
-
-    internal class CreditAccount : Account
-    {
+        public string Type { get; }
+        public double Balance { get; set; }
         public CreditAccount()
         {
             Balance = 0;
@@ -59,5 +90,28 @@ namespace Task2
             Balance = startBalance;
             Type = "Кредитный";
         }
+        Account IMoneyHolder<Account, Account>.GetAccount => new Account(Balance);
+        public void SetBalance<AmountType>(AmountType amount)
+        {
+            Balance = Convert.ToDouble(amount);
+        }
+        public void ReceiveMoney<AmountType>(AmountType amount)
+        {
+            Balance += Convert.ToDouble(amount);
+        }
+        public void SendMoney<AccountType, AmountType>(AccountType receiver, AmountType amount)
+            where AccountType : IMoneyHolder<Account, Account>
+        {
+            try
+            {
+                Balance -= Convert.ToDouble(amount);
+                receiver.ReceiveMoney(amount);
+            }
+            catch
+            {
+                throw new Exception("Что-то пошло не так, транзакция не завершена.");
+            }
+        }
+
     }
 }
