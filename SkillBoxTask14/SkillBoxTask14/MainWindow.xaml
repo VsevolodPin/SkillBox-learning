@@ -1,0 +1,54 @@
+﻿<Window x:Class="SkillBoxTask14.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SkillBoxTask14"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="542" Width="440" MinHeight="550" WindowStartupLocation="CenterScreen" MinWidth="440">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="477.04"/>
+            <RowDefinition Height="3"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Height="25" Margin="10,70,0,0" TextWrapping="Wrap" Text="Выбор счета списания" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+        <ComboBox x:Name="Client1CB" Height="25" Margin="10,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectionChanged="Client1CB_SelectionChanged"/>
+        <TextBox Height="24" Margin="10,128,0,0" TextWrapping="Wrap" Text="Баланс:" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Left" Width="75"/>
+        <TextBox Height="24" Margin="10,158,0,0" TextWrapping="Wrap" Text="Списать:" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Left" Width="75"/>
+        <TextBox x:Name="Balance1TB" Height="24" Margin="90,128,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Left" Width="120"/>
+        <TextBox x:Name="TakeOffTB" Height="24" Margin="90,158,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120" TextChanged="TakeOffTB_TextChanged"/>
+
+
+        <TextBlock Height="25" Margin="0,70,11,0" TextWrapping="Wrap" Text="Выбор счета зачисления" VerticalAlignment="Top" HorizontalAlignment="Right" Width="200"/>
+        <ComboBox x:Name="Client2CB" Height="25" Margin="0,35,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="200" SelectionChanged="Client2CB_SelectionChanged"/>
+        <TextBox Height="24" Margin="0,128,136,0" TextWrapping="Wrap" Text="Баланс:" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="75"/>
+        <TextBox Height="24" Margin="0,158,136,0" TextWrapping="Wrap" Text="Зачислить:" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="75"/>
+        <TextBox x:Name="Balance2TB" Height="24" Margin="0,128,11,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="120"/>
+        <TextBox x:Name="ReceiveTB" Height="24" Margin="0,158,11,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="120"/>
+        <Button x:Name="TransactionBT" Content="Перевести" Margin="0,0,10,261" Height="26" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="121" Click="TransactionBT_Click"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="10,345,0,106" TextWrapping="Wrap" Text="Создание нового клиента" Width="200"/>
+        <TextBox Margin="10,373,0,77" TextWrapping="Wrap" Text="Полное имя:" IsEnabled="False" HorizontalAlignment="Left" Width="121" UseLayoutRounding="False"/>
+        <TextBox Height="25" Margin="10,0,0,47" TextWrapping="Wrap" Text="Начальный баланс" VerticalAlignment="Bottom" IsEnabled="False" HorizontalAlignment="Left" Width="121" UseLayoutRounding="False"/>
+        <TextBox x:Name="FullNameTB" Margin="137,373,10,78" TextWrapping="Wrap" Text=""/>
+        <TextBox x:Name="StartBalanceTB" Margin="137,403,10,48" TextWrapping="Wrap" Text="0"/>
+        <Button x:Name="CloseAccBT" Content="Закрыть счет" Margin="10,190,0,0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="121" Click="CloseAccBT_Click"/>
+        <Button x:Name="CreateBT" Content="Добавить клиента" Margin="10,436,0,15" HorizontalAlignment="Left" Width="121" Click="CreateBT_Click" UseLayoutRounding="False"/>
+        <Button x:Name="SaveBT" Content="Сохранить в БД" Margin="0,436,10,15" HorizontalAlignment="Right" Width="121" Click="SaveBT_Click"/>
+        <TextBlock Height="25" Margin="10,10,0,0" TextWrapping="Wrap" Text="Выбор клиента счета списания " VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+        <TextBlock Height="25" Margin="0,10,11,0" TextWrapping="Wrap" Text="Выбор клиента счета зачисления" VerticalAlignment="Top" HorizontalAlignment="Right" Width="200"/>
+        <ComboBox x:Name="Client1AccCB" Height="25" Margin="10,95,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" SelectionChanged="Client1AccCB_SelectionChanged"/>
+        <ComboBox x:Name="Client2AccCB" Height="25" Margin="0,95,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="200" SelectionChanged="Client2AccCB_SelectionChanged"/>
+        <Button x:Name="OpenAccBT" Content="Открыть счет" Margin="10,308,0,0" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Width="121" Click="OpenAccBT_Click"/>
+        <RadioButton x:Name="DebitAccRB" Content="Депозитный" Height="15" Margin="0,283,98,0" VerticalAlignment="Top" IsChecked="True" HorizontalAlignment="Right" Width="95" GroupName="Accounts"/>
+        <RadioButton x:Name="CreditAccRB" Content="Кредитный" Height="15" Margin="0,283,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="88" GroupName="Accounts"/>
+        <ComboBox x:Name="ClientForNewAcc" Height="24" Margin="10,248,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+        <TextBlock Height="26" Margin="10,222,0,0" TextWrapping="Wrap" Text="Выбор клиента нового счета" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"/>
+        <TextBox Height="25" Margin="10,279,0,0" TextWrapping="Wrap" Text="Начальный баланс" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Left" Width="121"/>
+        <TextBox x:Name="StartBalanceForNewAccTB" Margin="137,277,214,174" TextWrapping="Wrap" Text="0"/>
+        <RadioButton x:Name="ConsRB" Content="Консультант" Height="19" Margin="0,11,98,0" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Right" Width="97" GroupName="Workers" IsChecked="True"/>
+        <RadioButton x:Name="ManagerRB" Content="Менеджер" Height="19" Margin="0,11,10,0" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Right" Width="85" GroupName="Workers"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Работник:" Width="80" Grid.Row="2" Height="26" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

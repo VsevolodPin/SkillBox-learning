@@ -1,0 +1,19 @@
+﻿<Window x:Class="SkillBoxTask14.Vidget"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SkillBoxTask14"
+        mc:Ignorable="d"
+        Title="Vidget" Height="200" Width="360">
+    <Grid Width="360" Height="180" MinWidth="300" MaxWidth="300" MaxHeight="220">
+        <RichTextBox x:Name="VidgetMsg" FontSize="16" Margin="10,10,10,10">
+            <FlowDocument>
+                <Paragraph>
+
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+
+    </Grid>
+</Window>
